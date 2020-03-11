@@ -13,9 +13,9 @@ before_install:
 # By setting anything to org.apache.activemq.artemis.core.io.aio.AIOSequentialFileFactory.DISABLED we are disabling libaio loading on the testsuite
 script: 
 - set -e
-- mvn -Dorg.apache.activemq.artemis.core.io.aio.AIOSequentialFileFactory.DISABLED=AnythingNotNull -Pfast-tests -Pextra-tests -B install -q
-- cd examples
-- mvn install -Prelease install -B -q
+- mvn -B clean install -DskipTests -q
+- cd tests/integration-tests/
+- mvn -Dorg.apache.activemq.artemis.core.io.aio.AIOSequentialFileFactory.DISABLED=AnythingNotNull -Dtest=org.apache.activemq.artemis.tests.integration.amqp.* -DskipIntegrationTests=false -Dmaven.test.redirectTestOutputToFile=true test
 
 cache:
   directories:

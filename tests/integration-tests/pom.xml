@@ -475,6 +475,7 @@
             <artifactId>maven-surefire-plugin</artifactId>
             <configuration>
                <skipTests>${skipIntegrationTests}</skipTests>
+               <redirectTestOutputToFile>${maven.test.redirectTestOutputToFile}</redirectTestOutputToFile>
                <excludes>
                   <exclude>**/ReplicatedJMSFailoverTest.java</exclude>
                   <exclude>org.apache.activemq/tests/util/*.java</exclude>
