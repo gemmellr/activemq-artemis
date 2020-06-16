@@ -914,12 +914,9 @@
                       <groupId>org.apache.maven.plugins</groupId>
                       <artifactId>maven-compiler-plugin</artifactId>
                       <configuration>
-                          <showWarnings>true</showWarnings>
                           <fork>true</fork>
                           <compilerArgs combine.children="append">
-                              <arg>-XDcompilePolicy=simple</arg>
                               <arg>-J-Xbootclasspath/p:${settings.localRepository}/com/google/errorprone/javac/${javac.version}/javac-${javac.version}.jar</arg>
-                              <arg>-Xplugin:ErrorProne -Xep:MissingOverride:ERROR -Xep:NonAtomicVolatileUpdate:ERROR -Xep:SynchronizeOnNonFinalField:ERROR -Xep:WaitNotInLoop:ERROR -XepExcludedPaths:.*/generated-sources/.*</arg>
                           </compilerArgs>
                       </configuration>
                   </plugin>
@@ -942,12 +939,8 @@
                       <groupId>org.apache.maven.plugins</groupId>
                       <artifactId>maven-compiler-plugin</artifactId>
                       <configuration>
-                          <showWarnings>true</showWarnings>
-                          <compilerArgs>
-                              <arg>-Xdiags:verbose</arg>
+                          <compilerArgs combine.children="append">
                               <arg>--add-exports=jdk.unsupported/sun.misc=ALL-UNNAMED</arg>
-                              <arg>-XDcompilePolicy=simple</arg>
-                              <arg>-Xplugin:ErrorProne -Xep:MissingOverride:ERROR -Xep:NonAtomicVolatileUpdate:ERROR -Xep:SynchronizeOnNonFinalField:ERROR -Xep:WaitNotInLoop:ERROR -XepExcludedPaths:.*/generated-sources/.*</arg>
                           </compilerArgs>
                       </configuration>
                   </plugin>
@@ -1427,6 +1420,14 @@
                <groupId>org.apache.maven.plugins</groupId>
                <artifactId>maven-compiler-plugin</artifactId>
                <version>3.8.1</version>
+               <configuration>
+                  <showWarnings>true</showWarnings>
+                  <compilerArgs>
+                     <arg>-Xdiags:verbose</arg>
+                     <arg>-XDcompilePolicy=simple</arg>
+                     <arg>-Xplugin:ErrorProne -Xep:MissingOverride:ERROR -Xep:NonAtomicVolatileUpdate:ERROR -Xep:SynchronizeOnNonFinalField:ERROR -Xep:WaitNotInLoop:ERROR -XepExcludedPaths:.*/generated-sources/.*</arg>
+                  </compilerArgs>
+               </configuration>
             </plugin>
             <plugin>
                <groupId>org.apache.maven.plugins</groupId>
