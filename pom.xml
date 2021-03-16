@@ -70,10 +70,6 @@
    <name>ActiveMQ Artemis Parent</name>
    <url>http://apache.org/activemq</url>
 
-   <prerequisites>
-      <maven>3.1.0</maven>
-   </prerequisites>
-
    <properties>
       <modular.jdk.surefire.arg />
       <javac.version>9+181-r4173-1</javac.version>
