@@ -26,6 +26,11 @@ jobs:
         with:
           java-version: ${{ matrix.java }}
 
+
+      - name: Clean MQTT Client Cache
+        run: |
+          rm -rfv ~/.m2/repository/org/eclipse/paho/org.eclipse.paho.client.mqttv3/
+
       # use 'install' so smoke-tests will work
       # use '-Pextra-tests' to ensure extra-tests compiles even though they won't actually run
       # By setting anything to org.apache.activemq.artemis.core.io.aio.AIOSequentialFileFactory.DISABLED we are disabling libaio loading on the testsuite
