@@ -27,25 +27,6 @@ jobs:
           java-version: ${{ matrix.java }}
           distribution: 'adopt'
 
-      # use 'install' so smoke-tests will work
-      # use '-Pextra-tests' to ensure extra-tests compiles even though they won't actually run
-      # By setting anything to org.apache.activemq.artemis.core.io.aio.AIOSequentialFileFactory.DISABLED we are disabling libaio loading on the testsuite
-      - name: Build Main
-        run: |
-          mvn -Dorg.apache.activemq.artemis.core.io.aio.AIOSequentialFileFactory.DISABLED=AnythingNotNull -Derrorprone -Pfast-tests -Pextra-tests -Ptests-CI -Pjmh install
-
-      - name: Build Examples (JDK8 / -Prelease)
-        if: matrix.java == '8'
-        run: |
-          cd examples
-          mvn install -Prelease
-
-      - name: Build Examples (JDK 11+ / -Pexamples,noRun)
-        if: matrix.java != '8'
-        run: |
-          cd examples
-          mvn install -Pexamples,noRun
-
       - name: Javadoc Check (JDK8 / -Prelease)
         if: matrix.java == '8'
         run: |
