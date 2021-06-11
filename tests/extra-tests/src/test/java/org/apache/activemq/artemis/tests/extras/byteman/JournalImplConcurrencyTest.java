@@ -49,9 +49,7 @@ public class JournalImplConcurrencyTest extends JournalImplTestBase {
          targetMethod = "readLock()",
          targetLocation = "EXIT",
          condition = "Thread.currentThread().getName().contains(\"ArtemisIOThread\")",
-         action = "throw RuntimeException(\"Injected exception\");"
-      )
-   })
+         action = "throw RuntimeException(\"Injected exception\");")})
    public void testTryDelete() throws Exception {
       setup(10, 10 * 1024, true);
       createJournal();
