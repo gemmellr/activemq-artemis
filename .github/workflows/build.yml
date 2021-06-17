@@ -8,7 +8,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        java: [ 8, 11, 16 ]
+        java: [11, 16 ]
 
     steps:
       - uses: actions/checkout@v2
@@ -34,24 +34,24 @@ jobs:
         run: |
           mvn -Dorg.apache.activemq.artemis.core.io.aio.AIOSequentialFileFactory.DISABLED=AnythingNotNull -Derrorprone -Pfast-tests -Pextra-tests -Ptests-CI -Pjmh install
 
-      - name: Build Examples (JDK8 / -Prelease)
-        if: matrix.java == '8'
+      - name: Build Examples (JDK11 / -Prelease)
+        if: matrix.java == '11'
         run: |
           cd examples
           mvn install -Prelease
 
-      - name: Build Examples (JDK 11+ / -Pexamples,noRun)
-        if: matrix.java != '8'
+      - name: Build Examples (JDK >11 / -Pexamples,noRun)
+        if: matrix.java != '11'
         run: |
           cd examples
           mvn install -Pexamples,noRun
 
-      - name: Javadoc Check (JDK8 / -Prelease)
-        if: matrix.java == '8'
+      - name: Javadoc Check (JDK11 / -Prelease)
+        if: matrix.java == '11'
         run: |
           mvn javadoc:javadoc -Prelease
 
-      - name: Javadoc Check (JDK 11+)
-        if: matrix.java != '8'
+      - name: Javadoc Check (JDK >11)
+        if: matrix.java != '11'
         run: |
           mvn javadoc:javadoc
