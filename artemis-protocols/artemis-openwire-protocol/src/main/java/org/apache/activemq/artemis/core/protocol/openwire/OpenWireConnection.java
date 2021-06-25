@@ -1145,7 +1145,15 @@ public class OpenWireConnection extends AbstractRemotingConnection implements Se
 
       @Override
       public Response processAddConnection(ConnectionInfo info) throws Exception {
+         OpenWireRedirectHandler redirectHandler = new OpenWireRedirectHandler(server, transportConnection,
+            info, OpenWireConnection.this, protocolManager);
+
          try {
+            if (redirectHandler.redirect()) {
+               shutdown(true);
+               return null;
+            }
+
             protocolManager.addConnection(OpenWireConnection.this, info);
          } catch (Exception e) {
             Response resp = new ExceptionResponse(e);
