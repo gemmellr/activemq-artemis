@@ -35,12 +35,12 @@ jobs:
         run: |
           mvn -Dorg.apache.activemq.artemis.core.io.aio.AIOSequentialFileFactory.DISABLED=AnythingNotNull -Dmaven.test.redirectTestOutputToFile=true -Derrorprone -Ptests -Ptests-CI -Pjmh install
 
-      - name: Archive Test Logs On Failure
-        if: failure()
+      - name: Archive Test Logs (Upon Failure/Cancel)
+        if: failure() || cancelled()
         run: tar -czf surefire-reports-jdk-${{ matrix.java }}.tar.gz **/target/surefire-reports/*
 
-      - name: Upload Test Logs On Failure
-        if: failure()
+      - name: Upload Test Logs (Upon Failure/Cancel)
+        if: failure() || cancelled()
         uses: actions/upload-artifact@v2
         with:
           name: surefire-reports-jdk-${{ matrix.java }}
