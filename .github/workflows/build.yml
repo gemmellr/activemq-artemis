@@ -8,7 +8,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        java: [11, 16 ]
+        java: [ 11, 16 ]
 
     steps:
       - uses: actions/checkout@v2
@@ -33,6 +33,17 @@ jobs:
       - name: Build Main
         run: |
           mvn -Dorg.apache.activemq.artemis.core.io.aio.AIOSequentialFileFactory.DISABLED=AnythingNotNull -Dmaven.test.redirectTestOutputToFile=true -Derrorprone -Pfast-tests -Pextra-tests -Ptests-CI -Pjmh install
+
+      - name: Archive Test Logs On Failure
+        if: failure()
+        run: tar -czf surefire-reports-jdk-${{ matrix.java }}.tar.gz **/target/surefire-reports/*
+
+      - name: Upload Test Logs On Failure
+        if: failure()
+        uses: actions/upload-artifact@v2
+        with:
+          name: surefire-reports-jdk-${{ matrix.java }}
+          path: surefire-reports-jdk-${{ matrix.java }}.tar.gz
 
       - name: Build Examples (JDK11 / -Prelease)
         if: matrix.java == '11'
