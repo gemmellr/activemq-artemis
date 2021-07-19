@@ -67,6 +67,10 @@ public class AMQPMirrorControllerSource extends BasicMirrorController<Sender> im
    public static final Symbol INTERNAL_ID = Symbol.getSymbol("x-opt-amq-mr-id");
    public static final Symbol INTERNAL_DESTINATION = Symbol.getSymbol("x-opt-amq-mr-dst");
 
+   // Capabilities
+   public static final Symbol MIRROR_CAPABILITY = Symbol.getSymbol("amq.mirror");
+   public static final Symbol QPID_DISPATCH_WAYPOINT_CAPABILITY = Symbol.valueOf("qd.waypoint");
+
    public static final SimpleString INTERNAL_ID_EXTRA_PROPERTY = SimpleString.toSimpleString(INTERNAL_ID.toString());
    public static final SimpleString INTERNAL_BROKER_ID_EXTRA_PROPERTY = SimpleString.toSimpleString(BROKER_ID.toString());
 
@@ -138,7 +142,7 @@ public class AMQPMirrorControllerSource extends BasicMirrorController<Sender> im
       if (logger.isTraceEnabled()) {
          logger.trace(server + " deleteAddress " + addressInfo);
       }
-      if (getControllerInUse() != null && !addressInfo.isInternal()) {
+      if (invalidTarget(getControllerInUse()) || addressInfo.isInternal()) {
          return;
       }
       if (deleteQueues) {
@@ -152,7 +156,7 @@ public class AMQPMirrorControllerSource extends BasicMirrorController<Sender> im
       if (logger.isTraceEnabled()) {
          logger.trace(server + " createQueue " + queueConfiguration);
       }
-      if (getControllerInUse() != null || queueConfiguration.isInternal()) {
+      if (invalidTarget(getControllerInUse()) || queueConfiguration.isInternal()) {
          if (logger.isTraceEnabled()) {
             logger.trace("Rejecting ping pong on create " + queueConfiguration + " as isInternal=" + queueConfiguration.isInternal() + " and mirror target = " + getControllerInUse());
          }
@@ -169,13 +173,19 @@ public class AMQPMirrorControllerSource extends BasicMirrorController<Sender> im
       if (logger.isTraceEnabled()) {
          logger.trace(server + " deleteQueue " + address + "/" + queue);
       }
-      if (getControllerInUse() != null) {
+
+      if (invalidTarget(getControllerInUse())) {
          return;
       }
+
       if (deleteQueues) {
          Message message = createMessage(address, queue, DELETE_QUEUE, null, queue.toString());
          route(server, message);
       }
+   }
+
+   private boolean invalidTarget(MirrorController controller) {
+      return controller != null && sameNode(getRemoteMirrorId(), controller.getRemoteMirrorId());
    }
 
    private boolean sameNode(String remoteID, String sourceID) {
@@ -184,8 +194,7 @@ public class AMQPMirrorControllerSource extends BasicMirrorController<Sender> im
 
    @Override
    public void sendMessage(Message message, RoutingContext context, List<MessageReference> refs) {
-      if (context.getMirrorSource() != null &&
-         sameNode(getRemoteMirrorId(), context.getMirrorSource().getRemoteMirrorId())) {
+      if (invalidTarget(context.getMirrorSource())) {
          if (logger.isTraceEnabled()) {
             logger.trace("server " + server + " is discarding send to avoid infinite loop (reflection with the mirror)");
          }
@@ -276,8 +285,11 @@ public class AMQPMirrorControllerSource extends BasicMirrorController<Sender> im
          return;
       }
 
-      if ((controllerInUse != null && controllerInUse.getRemoteMirrorId().equals(getRemoteMirrorId())) || // mirror reflection ||
-          (ref.getQueue() != null && (ref.getQueue().isInternalQueue() || ref.getQueue().isMirrorController()))) { // control queues {
+      if (invalidTarget(controllerInUse)) {
+         return;
+      }
+
+      if ((ref.getQueue() != null && (ref.getQueue().isInternalQueue() || ref.getQueue().isMirrorController()))) {
          if (logger.isDebugEnabled()) {
             logger.debug(server + " rejecting postAcknowledge queue=" + ref.getQueue().getName() + ", ref=" + ref + " to avoid infinite loop with the mirror (reflection)");
          }

@@ -57,6 +57,11 @@ import org.apache.activemq.artemis.core.server.plugin.ActiveMQServerQueuePlugin;
 import org.apache.activemq.artemis.protocol.amqp.broker.AMQPSessionCallback;
 import org.apache.activemq.artemis.protocol.amqp.broker.ActiveMQProtonRemotingConnection;
 import org.apache.activemq.artemis.protocol.amqp.broker.ProtonProtocolManager;
+import org.apache.activemq.artemis.protocol.amqp.connect.exceptions.SelfConnectionNotAllowed;
+import org.apache.activemq.artemis.protocol.amqp.connect.exceptions.MissingBrokerID;
+import org.apache.activemq.artemis.protocol.amqp.connect.exceptions.MissingCapability;
+import org.apache.activemq.artemis.protocol.amqp.connect.exceptions.RemoteLinkClosed;
+import org.apache.activemq.artemis.protocol.amqp.connect.exceptions.OpenTimeout;
 import org.apache.activemq.artemis.protocol.amqp.connect.mirror.AMQPMirrorControllerAggregation;
 import org.apache.activemq.artemis.protocol.amqp.connect.mirror.AMQPMirrorControllerSource;
 import org.apache.activemq.artemis.protocol.amqp.logger.ActiveMQAMQPProtocolLogger;
@@ -78,6 +83,8 @@ import org.apache.qpid.proton.amqp.messaging.Source;
 import org.apache.qpid.proton.amqp.messaging.Target;
 import org.apache.qpid.proton.amqp.transport.ReceiverSettleMode;
 import org.apache.qpid.proton.amqp.transport.SenderSettleMode;
+import org.apache.qpid.proton.engine.EndpointState;
+import org.apache.qpid.proton.engine.Link;
 import org.apache.qpid.proton.engine.Receiver;
 import org.apache.qpid.proton.engine.Sender;
 import org.apache.qpid.proton.engine.Session;
@@ -99,6 +106,7 @@ public class AMQPBrokerConnection implements ClientConnectionLifeCycleListener, 
    private final AMQPBrokerConnectionManager bridgeManager;
    private AMQPMirrorControllerSource mirrorControllerSource;
    private int retryCounter = 0;
+   private int lastRetryCounter;
    private boolean connecting = false;
    private volatile ScheduledFuture reconnectFuture;
    private final Set<Queue> senders = new HashSet<>();
@@ -141,6 +149,10 @@ public class AMQPBrokerConnection implements ClientConnectionLifeCycleListener, 
    @Override
    public boolean isStarted() {
       return started;
+   }
+
+   public boolean isConnecting() {
+      return connecting;
    }
 
    @Override
@@ -207,11 +219,12 @@ public class AMQPBrokerConnection implements ClientConnectionLifeCycleListener, 
 
    public void createLink(Queue queue, AMQPBrokerConnectionElement connectionElement) {
       if (connectionElement.getType() == AMQPBrokerConnectionAddressType.PEER) {
-         connectSender(queue, queue.getAddress().toString(), null, null, null, Symbol.valueOf("qd.waypoint"));
-         connectReceiver(protonRemotingConnection, session, sessionContext, queue, Symbol.valueOf("qd.waypoint"));
+         Symbol[] dispatchCapability = new Symbol[]{AMQPMirrorControllerSource.QPID_DISPATCH_WAYPOINT_CAPABILITY};
+         connectSender(queue, queue.getAddress().toString(), null, null, null, null, dispatchCapability);
+         connectReceiver(protonRemotingConnection, session, sessionContext, queue, dispatchCapability);
       } else {
          if (connectionElement.getType() == AMQPBrokerConnectionAddressType.SENDER) {
-            connectSender(queue, queue.getAddress().toString(), null, null, null);
+            connectSender(queue, queue.getAddress().toString(), null, null, null, null, null);
          }
          if (connectionElement.getType() == AMQPBrokerConnectionAddressType.RECEIVER) {
             connectReceiver(protonRemotingConnection, session, sessionContext, queue);
@@ -227,6 +240,12 @@ public class AMQPBrokerConnection implements ClientConnectionLifeCycleListener, 
          mirrorElement.setMirrorSNF(snf);
       }
       return snf;
+   }
+
+   private void linkClosed(Link link) {
+      if (link.getLocalState() == EndpointState.ACTIVE) {
+         error(new RemoteLinkClosed());
+      }
    }
 
    private void doConnect() {
@@ -248,7 +267,7 @@ public class AMQPBrokerConnection implements ClientConnectionLifeCycleListener, 
             return;
          }
 
-         int currentRetryCounter = retryCounter;
+         lastRetryCounter = retryCounter;
 
          retryCounter = 0;
 
@@ -264,6 +283,7 @@ public class AMQPBrokerConnection implements ClientConnectionLifeCycleListener, 
          ConnectionEntry entry = protonProtocolManager.createOutgoingConnectionEntry(connection, saslFactory);
          server.getRemotingService().addConnectionEntry(connection, entry);
          protonRemotingConnection = (ActiveMQProtonRemotingConnection) entry.connection;
+         protonRemotingConnection.getAmqpConnection().setLinkCloseListener(this::linkClosed);
 
          connection.getChannel().pipeline().addLast(new AMQPBrokerConnectionChannelHandler(bridgesConnector.getChannelGroup(), protonRemotingConnection.getAmqpConnection().getHandler(), this, server.getExecutorFactory().getExecutor()));
 
@@ -294,7 +314,8 @@ public class AMQPBrokerConnection implements ClientConnectionLifeCycleListener, 
 
                   Queue queue = server.locateQueue(getMirrorSNF(replica));
 
-                  connectSender(queue, ProtonProtocolManager.MIRROR_ADDRESS, mirrorControllerSource::setLink, (r) -> AMQPMirrorControllerSource.validateProtocolData(protonProtocolManager.getReferenceIDSupplier(), r, getMirrorSNF(replica)), server.getNodeID().toString());
+                  connectSender(queue, ProtonProtocolManager.MIRROR_ADDRESS, mirrorControllerSource::setLink, (r) -> AMQPMirrorControllerSource.validateProtocolData(protonProtocolManager.getReferenceIDSupplier(), r, getMirrorSNF(replica)), server.getNodeID().toString(),
+                                new Symbol[]{AMQPMirrorControllerSource.MIRROR_CAPABILITY}, new Symbol[]{AMQPMirrorControllerSource.MIRROR_CAPABILITY});
                }
             }
          }
@@ -303,7 +324,7 @@ public class AMQPBrokerConnection implements ClientConnectionLifeCycleListener, 
 
          bridgeManager.connected(connection, this);
 
-         ActiveMQAMQPProtocolLogger.LOGGER.successReconnect(brokerConnectConfiguration.getName(), host + ":" + port, currentRetryCounter);
+         ActiveMQAMQPProtocolLogger.LOGGER.successReconnect(brokerConnectConfiguration.getName(), host + ":" + port, lastRetryCounter);
 
          connecting = false;
       } catch (Throwable e) {
@@ -312,6 +333,7 @@ public class AMQPBrokerConnection implements ClientConnectionLifeCycleListener, 
    }
 
    public void retryConnection() {
+      lastRetryCounter = retryCounter;
       if (bridgeManager.isStarted() && started) {
          if (brokerConnectConfiguration.getReconnectAttempts() < 0 || retryCounter < brokerConnectConfiguration.getReconnectAttempts()) {
             retryCounter++;
@@ -322,8 +344,9 @@ public class AMQPBrokerConnection implements ClientConnectionLifeCycleListener, 
             reconnectFuture = scheduledExecutorService.schedule(() -> connectExecutor.execute(() -> doConnect()), brokerConnectConfiguration.getRetryInterval(), TimeUnit.MILLISECONDS);
          } else {
             retryCounter = 0;
+            started = false;
             connecting = false;
-            ActiveMQAMQPProtocolLogger.LOGGER.retryConnectionFailed(brokerConnectConfiguration.getName(), host + ":" +  port, retryCounter);
+            ActiveMQAMQPProtocolLogger.LOGGER.retryConnectionFailed(brokerConnectConfiguration.getName(), host + ":" +  port, lastRetryCounter);
             if (logger.isDebugEnabled()) {
                logger.debug("no more reconnections as the retry counter reached " + retryCounter + " out of " + brokerConnectConfiguration.getReconnectAttempts());
             }
@@ -474,7 +497,8 @@ public class AMQPBrokerConnection implements ClientConnectionLifeCycleListener, 
                               java.util.function.Consumer<Sender> senderConsumer,
                               java.util.function.Consumer<? super MessageReference> beforeDeliver,
                               String brokerID,
-                              Symbol... capabilities) {
+                              Symbol[] desiredCapabilities,
+                              Symbol[] targetCapabilities) {
       if (logger.isDebugEnabled()) {
          logger.debug("Connecting outbound for " + queue);
       }
@@ -497,8 +521,8 @@ public class AMQPBrokerConnection implements ClientConnectionLifeCycleListener, 
             sender.setReceiverSettleMode(ReceiverSettleMode.FIRST);
             Target target = new Target();
             target.setAddress(targetName);
-            if (capabilities != null) {
-               target.setCapabilities(capabilities);
+            if (targetCapabilities != null) {
+               target.setCapabilities(targetCapabilities);
             }
             sender.setTarget(target);
 
@@ -511,14 +535,57 @@ public class AMQPBrokerConnection implements ClientConnectionLifeCycleListener, 
                sender.setProperties(mapProperties);
             }
 
+            if (desiredCapabilities != null) {
+               sender.setDesiredCapabilities(desiredCapabilities);
+            }
+
             AMQPOutgoingController outgoingInitializer = new AMQPOutgoingController(queue, sender, sessionContext.getSessionSPI());
 
-            ProtonServerSenderContext senderContext = new ProtonServerSenderContext(protonRemotingConnection.getAmqpConnection(), sender, sessionContext, sessionContext.getSessionSPI(), outgoingInitializer).setBeforeDelivery(beforeDeliver);
+            sender.setDesiredCapabilities(new Symbol[]{Symbol.getSymbol("hello")});
+            sender.open();
 
-            sessionContext.addSender(sender, senderContext);
-            if (senderConsumer != null) {
-               senderConsumer.accept(sender);
+            final ScheduledFuture futureTimeout;
+
+            if (bridgesConnector.getConnectTimeoutMillis() > 0) {
+               futureTimeout = server.getScheduledPool().schedule(() -> error(new OpenTimeout(), lastRetryCounter), bridgesConnector.getConnectTimeoutMillis(), TimeUnit.MILLISECONDS);
+            } else {
+               futureTimeout = null;
             }
+
+            // Using attachments to set up a Runnable that will be executed inside AMQPBrokerConnection::remoteLinkOpened
+            sender.attachments().set(Runnable.class, Runnable.class, () -> {
+               ProtonServerSenderContext senderContext = new ProtonServerSenderContext(protonRemotingConnection.getAmqpConnection(), sender, sessionContext, sessionContext.getSessionSPI(), outgoingInitializer).setBeforeDelivery(beforeDeliver);
+               try {
+                  if (futureTimeout != null) {
+                     futureTimeout.cancel(false);
+                  }
+
+                  if (desiredCapabilities != null) {
+                     if (!verifyOfferedCapabilities(sender, desiredCapabilities)) {
+                        error(new MissingCapability(desiredCapabilities), lastRetryCounter);
+                        return;
+                     }
+                  }
+                  if (brokerID != null) {
+                     if (sender.getRemoteProperties() == null ||
+                         !sender.getRemoteProperties().containsKey(AMQPMirrorControllerSource.BROKER_ID)) {
+                        error(new MissingBrokerID(), lastRetryCounter);
+                        return;
+                     }
+
+                     Object remoteBrokerID = sender.getRemoteProperties().get(AMQPMirrorControllerSource.BROKER_ID);
+                     if (remoteBrokerID.equals(brokerID)) {
+                        error(new SelfConnectionNotAllowed(brokerID), lastRetryCounter);
+                     }
+                  }
+                  sessionContext.addSender(sender, senderContext);
+                  if (senderConsumer != null) {
+                     senderConsumer.accept(sender);
+                  }
+               } catch (Exception e) {
+                  error(e);
+               }
+            });
          } catch (Exception e) {
             error(e);
          }
@@ -526,7 +593,39 @@ public class AMQPBrokerConnection implements ClientConnectionLifeCycleListener, 
       });
    }
 
+   protected boolean verifyOfferedCapabilities(Sender sender, Symbol[] capabilities) {
+
+      if (sender.getRemoteOfferedCapabilities() == null) {
+         return false;
+      }
+
+      for (Symbol s : capabilities) {
+         boolean foundS = false;
+         for (Symbol b : sender.getRemoteOfferedCapabilities()) {
+            if (b.equals(s)) {
+               foundS = true;
+               break;
+            }
+         }
+         if (!foundS) {
+            return false;
+         }
+      }
+
+      return true;
+   }
+
    protected void error(Throwable e) {
+      error(e, 0);
+   }
+
+   // the retryCounter is passed here
+   // in case the error happened after the actual connection
+   // say the connection is invalid due to an invalid attribute or wrong password
+   // but the max retry should not be affected by such cases
+   // otherwise we would always retry from 0 and never reach a max
+   protected void error(Throwable e, int retryCounter) {
+      this.retryCounter = retryCounter;
       connecting = false;
       logger.warn(e.getMessage(), e);
       redoConnection();

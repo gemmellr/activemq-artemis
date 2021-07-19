@@ -75,8 +75,9 @@ public class AMQPChainedReplicaTest extends AmqpClientTestSupport {
       server_3.start();
 
       createAddressAndQueues(server);
-      createAddressAndQueues(server_2);
-      createAddressAndQueues(server_3);
+      Wait.assertTrue(() -> server.locateQueue(getQueueName()) != null);
+      Wait.assertTrue(() -> server_2.locateQueue(getQueueName()) != null);
+      Wait.assertTrue(() -> server_3.locateQueue(getQueueName()) != null);
 
       Queue q1 = server.locateQueue(getQueueName());
       Assert.assertNotNull(q1);

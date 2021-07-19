@@ -110,7 +110,7 @@ public class Wait {
       assertTrue(DEFAULT_FAILURE_MESSAGE, condition);
    }
 
-   public static void assertFalse(Condition condition) throws Exception {
+   public static void assertFalse(Condition condition) {
       assertTrue(() -> !condition.isSatisfied());
    }
 

@@ -36,6 +36,7 @@ import org.apache.activemq.artemis.protocol.amqp.proton.transaction.ProtonTransa
 import org.apache.qpid.proton.amqp.Symbol;
 import org.apache.qpid.proton.amqp.transaction.Coordinator;
 import org.apache.qpid.proton.amqp.transport.ErrorCondition;
+import org.apache.qpid.proton.engine.EndpointState;
 import org.apache.qpid.proton.engine.Receiver;
 import org.apache.qpid.proton.engine.Sender;
 import org.apache.qpid.proton.engine.Session;
@@ -191,10 +192,13 @@ public class AMQPSessionContext extends ProtonInitializable {
          senders.put(sender, protonSender);
          serverSenders.put(protonSender.getBrokerConsumer(), protonSender);
          sender.setContext(protonSender);
-         connection.runNow(() -> {
-            sender.open();
-            connection.flush();
-         });
+
+         if (sender.getLocalState() != EndpointState.ACTIVE) {
+            connection.runNow(() -> {
+               sender.open();
+               connection.flush();
+            });
+         }
 
          protonSender.start();
       } catch (ActiveMQAMQPException e) {
