@@ -64,6 +64,10 @@ public class ProtonProtocolManager extends AbstractProtocolManager<AMQPMessage, 
    private final List<AmqpInterceptor> incomingInterceptors = new ArrayList<>();
    private final List<AmqpInterceptor> outgoingInterceptors = new ArrayList<>();
 
+   public static String getMirrorAddress(String connectionName) {
+      return MIRROR_ADDRESS + "_" + connectionName;
+   }
+
    private final ActiveMQServer server;
 
    // We must use one referenceIDSupplier per server.

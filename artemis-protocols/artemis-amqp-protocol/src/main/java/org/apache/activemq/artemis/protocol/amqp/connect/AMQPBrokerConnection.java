@@ -228,11 +228,10 @@ public class AMQPBrokerConnection implements ClientConnectionLifeCycleListener, 
       }
    }
 
-
    SimpleString getMirrorSNF(AMQPMirrorBrokerConnectionElement mirrorElement) {
       SimpleString snf = mirrorElement.getMirrorSNF();
       if (snf == null) {
-         snf = SimpleString.toSimpleString(this.brokerConnectConfiguration.getName() + "_MIRRORSNF");
+         snf = SimpleString.toSimpleString(ProtonProtocolManager.getMirrorAddress(this.brokerConnectConfiguration.getName()));
          mirrorElement.setMirrorSNF(snf);
       }
       return snf;
@@ -310,7 +309,7 @@ public class AMQPBrokerConnection implements ClientConnectionLifeCycleListener, 
 
                   Queue queue = server.locateQueue(getMirrorSNF(replica));
 
-                  connectSender(queue, ProtonProtocolManager.MIRROR_ADDRESS, mirrorControllerSource::setLink, (r) -> AMQPMirrorControllerSource.validateProtocolData(protonProtocolManager.getReferenceIDSupplier(), r, getMirrorSNF(replica)), server.getNodeID().toString(),
+                  connectSender(queue, queue.getName().toString(), mirrorControllerSource::setLink, (r) -> AMQPMirrorControllerSource.validateProtocolData(protonProtocolManager.getReferenceIDSupplier(), r, getMirrorSNF(replica)), server.getNodeID().toString(),
                                 new Symbol[]{AMQPMirrorControllerSource.MIRROR_CAPABILITY}, new Symbol[]{AMQPMirrorControllerSource.MIRROR_CAPABILITY});
                }
             }
