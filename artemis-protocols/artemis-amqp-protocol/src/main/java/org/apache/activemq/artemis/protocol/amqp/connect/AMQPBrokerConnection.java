@@ -57,14 +57,10 @@ import org.apache.activemq.artemis.core.server.plugin.ActiveMQServerQueuePlugin;
 import org.apache.activemq.artemis.protocol.amqp.broker.AMQPSessionCallback;
 import org.apache.activemq.artemis.protocol.amqp.broker.ActiveMQProtonRemotingConnection;
 import org.apache.activemq.artemis.protocol.amqp.broker.ProtonProtocolManager;
-import org.apache.activemq.artemis.protocol.amqp.connect.exceptions.SelfConnectionNotAllowed;
-import org.apache.activemq.artemis.protocol.amqp.connect.exceptions.MissingBrokerID;
-import org.apache.activemq.artemis.protocol.amqp.connect.exceptions.MissingCapability;
-import org.apache.activemq.artemis.protocol.amqp.connect.exceptions.RemoteLinkClosed;
-import org.apache.activemq.artemis.protocol.amqp.connect.exceptions.OpenTimeout;
 import org.apache.activemq.artemis.protocol.amqp.connect.mirror.AMQPMirrorControllerAggregation;
 import org.apache.activemq.artemis.protocol.amqp.connect.mirror.AMQPMirrorControllerSource;
 import org.apache.activemq.artemis.protocol.amqp.logger.ActiveMQAMQPProtocolLogger;
+import org.apache.activemq.artemis.protocol.amqp.logger.ActiveMQAMQPProtocolMessageBundle;
 import org.apache.activemq.artemis.protocol.amqp.proton.AMQPSessionContext;
 import org.apache.activemq.artemis.protocol.amqp.proton.ProtonServerSenderContext;
 import org.apache.activemq.artemis.protocol.amqp.proton.SenderController;
@@ -244,7 +240,7 @@ public class AMQPBrokerConnection implements ClientConnectionLifeCycleListener, 
 
    private void linkClosed(Link link) {
       if (link.getLocalState() == EndpointState.ACTIVE) {
-         error(new RemoteLinkClosed());
+         error(ActiveMQAMQPProtocolMessageBundle.BUNDLE.brokerConnectionRemoteLinkClosed(), lastRetryCounter);
       }
    }
 
@@ -541,13 +537,12 @@ public class AMQPBrokerConnection implements ClientConnectionLifeCycleListener, 
 
             AMQPOutgoingController outgoingInitializer = new AMQPOutgoingController(queue, sender, sessionContext.getSessionSPI());
 
-            sender.setDesiredCapabilities(new Symbol[]{Symbol.getSymbol("hello")});
             sender.open();
 
             final ScheduledFuture futureTimeout;
 
             if (bridgesConnector.getConnectTimeoutMillis() > 0) {
-               futureTimeout = server.getScheduledPool().schedule(() -> error(new OpenTimeout(), lastRetryCounter), bridgesConnector.getConnectTimeoutMillis(), TimeUnit.MILLISECONDS);
+               futureTimeout = server.getScheduledPool().schedule(() -> error(ActiveMQAMQPProtocolMessageBundle.BUNDLE.brokerConnectionTimeout(), lastRetryCounter), bridgesConnector.getConnectTimeoutMillis(), TimeUnit.MILLISECONDS);
             } else {
                futureTimeout = null;
             }
@@ -562,20 +557,20 @@ public class AMQPBrokerConnection implements ClientConnectionLifeCycleListener, 
 
                   if (desiredCapabilities != null) {
                      if (!verifyOfferedCapabilities(sender, desiredCapabilities)) {
-                        error(new MissingCapability(desiredCapabilities), lastRetryCounter);
+                        error(ActiveMQAMQPProtocolMessageBundle.BUNDLE.missingCapability(Arrays.toString(desiredCapabilities)), lastRetryCounter);
                         return;
                      }
                   }
                   if (brokerID != null) {
                      if (sender.getRemoteProperties() == null ||
                          !sender.getRemoteProperties().containsKey(AMQPMirrorControllerSource.BROKER_ID)) {
-                        error(new MissingBrokerID(), lastRetryCounter);
+                        error(ActiveMQAMQPProtocolMessageBundle.BUNDLE.missingBrokerID(), lastRetryCounter);
                         return;
                      }
 
                      Object remoteBrokerID = sender.getRemoteProperties().get(AMQPMirrorControllerSource.BROKER_ID);
                      if (remoteBrokerID.equals(brokerID)) {
-                        error(new SelfConnectionNotAllowed(brokerID), lastRetryCounter);
+                        error(ActiveMQAMQPProtocolMessageBundle.BUNDLE.brokerConnectionMirrorItself(), lastRetryCounter);
                      }
                   }
                   sessionContext.addSender(sender, senderContext);

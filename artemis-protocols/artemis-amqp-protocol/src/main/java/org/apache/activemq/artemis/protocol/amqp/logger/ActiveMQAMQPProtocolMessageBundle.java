@@ -21,6 +21,7 @@ import org.apache.activemq.artemis.protocol.amqp.exceptions.ActiveMQAMQPInternal
 import org.apache.activemq.artemis.protocol.amqp.exceptions.ActiveMQAMQPInvalidFieldException;
 import org.apache.activemq.artemis.protocol.amqp.exceptions.ActiveMQAMQPNotFoundException;
 import org.apache.activemq.artemis.protocol.amqp.exceptions.ActiveMQAMQPSecurityException;
+import org.apache.activemq.artemis.protocol.amqp.exceptions.ActiveMQBrokerConnectionException;
 import org.jboss.logging.Messages;
 import org.jboss.logging.annotations.Message;
 import org.jboss.logging.annotations.MessageBundle;
@@ -86,5 +87,21 @@ public interface ActiveMQAMQPProtocolMessageBundle {
 
    @Message(id = 119017, value = "not authorized to create producer, {0}", format = Message.Format.MESSAGE_FORMAT)
    ActiveMQAMQPSecurityException securityErrorCreatingProducer(String message);
+
+   @Message(id = 119018, value = "link is missing a capability declaration {0}", format = Message.Format.MESSAGE_FORMAT)
+   ActiveMQBrokerConnectionException missingCapability(String capability);
+
+   @Message(id = 119019, value = "There is no brokerID defined on the target connection. Connection will be closed.", format = Message.Format.MESSAGE_FORMAT)
+   ActiveMQBrokerConnectionException missingBrokerID();
+
+   @Message(id = 119020, value = "The Broker Connection Open Callback Has Timed Out.", format = Message.Format.MESSAGE_FORMAT)
+   ActiveMQBrokerConnectionException brokerConnectionTimeout();
+
+   @Message(id = 119021, value = "The broker connection had a remote link closed unexpectedly", format = Message.Format.MESSAGE_FORMAT)
+   ActiveMQBrokerConnectionException brokerConnectionRemoteLinkClosed();
+
+   @Message(id = 119022, value = "The broker connection is trying to connect to itself. Check your configuration.", format = Message.Format.MESSAGE_FORMAT)
+   ActiveMQBrokerConnectionException brokerConnectionMirrorItself();
+
 
 }

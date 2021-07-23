@@ -84,7 +84,7 @@ public class ValidateAMQPErrorsTest extends AmqpClientTestSupport {
 
          Assert.assertEquals(1, server.getBrokerConnections().size());
          server.getBrokerConnections().forEach((t) -> Wait.assertFalse(t::isStarted));
-         Assert.assertTrue(AssertionLoggerHandler.findText("AMQ111001")); // max retry
+         Wait.assertTrue(() -> AssertionLoggerHandler.findText("AMQ111001")); // max retry
          AssertionLoggerHandler.clear();
          Thread.sleep(100);
          Assert.assertFalse(AssertionLoggerHandler.findText("AMQ111002")); // there shouldn't be a retry after the last failure
