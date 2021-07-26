@@ -23,7 +23,11 @@ import javax.jms.MessageConsumer;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
 import javax.jms.TextMessage;
+
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.TimeUnit;
@@ -39,6 +43,7 @@ import org.apache.activemq.artemis.core.config.amqpBrokerConnectivity.AMQPMirror
 import org.apache.activemq.artemis.core.server.ActiveMQServer;
 import org.apache.activemq.artemis.logs.AssertionLoggerHandler;
 import org.apache.activemq.artemis.protocol.amqp.broker.ActiveMQProtonRemotingConnection;
+import org.apache.activemq.artemis.protocol.amqp.broker.ProtonProtocolManager;
 import org.apache.activemq.artemis.protocol.amqp.connect.AMQPBrokerConnection;
 import org.apache.activemq.artemis.protocol.amqp.connect.mirror.AMQPMirrorControllerSource;
 import org.apache.activemq.artemis.tests.integration.amqp.AmqpClientTestSupport;
@@ -46,6 +51,9 @@ import org.apache.activemq.artemis.tests.util.CFUtil;
 import org.apache.activemq.artemis.tests.util.Wait;
 import org.apache.activemq.artemis.utils.collections.ConcurrentHashSet;
 import org.apache.qpid.proton.amqp.Symbol;
+import org.apache.qpid.proton.amqp.transport.AmqpError;
+import org.apache.qpid.proton.amqp.transport.ErrorCondition;
+import org.apache.qpid.proton.amqp.transport.Target;
 import org.apache.qpid.proton.engine.Link;
 import org.apache.qpid.proton.engine.Receiver;
 import org.apache.qpid.proton.engine.impl.ConnectionImpl;
@@ -310,7 +318,7 @@ public class ValidateAMQPErrorsTest extends AmqpClientTestSupport {
       CountDownLatch blockBeforeOpen = new CountDownLatch(1);
       AtomicInteger disconnects = new AtomicInteger(0);
 
-      ConcurrentHashSet<ProtonConnection> connections = new ConcurrentHashSet();
+      ConcurrentHashSet<ProtonConnection> connections = new ConcurrentHashSet<>();
 
       MockServer mockServer = new MockServer(vertx, serverOptions, null, serverConnection -> {
          serverConnection.disconnectHandler(c -> {
@@ -371,12 +379,9 @@ public class ValidateAMQPErrorsTest extends AmqpClientTestSupport {
 
    @Test
    public void testNoServerMirrorCapability() throws Exception {
+      Vertx vertx = Vertx.vertx(); // TODO: ensure this closes, may not if throws before try, move to @Before and @After handling?
 
-      Vertx vertx = Vertx.vertx();
-
-      ProtonServerOptions serverOptions = new ProtonServerOptions();
-
-      MockServer mockServer = new MockServer(vertx, serverOptions, null, serverConnection -> {
+      MockServer mockServer = new MockServer(vertx, serverConnection -> {
          serverConnection.openHandler(serverSender -> {
             serverConnection.open();
          });
@@ -392,10 +397,10 @@ public class ValidateAMQPErrorsTest extends AmqpClientTestSupport {
       });
 
       try {
-         AssertionLoggerHandler.startCapture();
+         AssertionLoggerHandler.startCapture(); //TODO: unused?
 
          AMQPBrokerConnectConfiguration amqpConnection = new AMQPBrokerConnectConfiguration("test", "tcp://localhost:" + mockServer.actualPort() + "?connect-timeout-millis=2000").setReconnectAttempts(5).setRetryInterval(10);
-         amqpConnection.addElement(new AMQPBrokerConnectionElement().setMatchAddress(getQueueName()).setType(AMQPBrokerConnectionAddressType.SENDER));
+         amqpConnection.addElement(new AMQPBrokerConnectionElement().setMatchAddress(getQueueName()).setType(AMQPBrokerConnectionAddressType.SENDER)); // Should this be here for a test about mirrors?
          amqpConnection.addElement(new AMQPMirrorBrokerConnectionElement());
          server.getConfiguration().addAMQPConnection(amqpConnection);
          server.start();
@@ -409,4 +414,113 @@ public class ValidateAMQPErrorsTest extends AmqpClientTestSupport {
       }
    }
 
+   /**
+    * Refuse the first mirror link, verify broker handles it and reconnects
+    * @throws Exception
+    */
+   @Test
+   public void testReconnectAfterMirrorLinkRefusal() throws Exception {
+      Vertx vertx = Vertx.vertx(); // TODO: ensure this closes, may not if throws before try, move to @Before and @After handling?
+
+      List<ProtonConnection> connections = Collections.synchronizedList(new ArrayList<ProtonConnection>());
+      List<ProtonConnection> disconnected = Collections.synchronizedList(new ArrayList<ProtonConnection>());
+      AtomicInteger refusedLinkMessageCount = new AtomicInteger();
+      AtomicInteger linkOpens = new AtomicInteger(0);
+
+      MockServer mockServer = new MockServer(vertx, serverConnection -> {
+         serverConnection.disconnectHandler(c -> {
+            disconnected.add(serverConnection);
+         });
+
+         serverConnection.openHandler(c -> {
+            connections.add(serverConnection);
+            serverConnection.open();
+         });
+
+         serverConnection.closeHandler(c -> {
+            serverConnection.close();
+            connections.remove(serverConnection);
+         });
+
+         serverConnection.sessionOpenHandler(session -> {
+            session.open();
+         });
+
+         serverConnection.receiverOpenHandler(serverReceiver -> {
+            Target remoteTarget = serverReceiver.getRemoteTarget();
+            String remoteAddress = remoteTarget == null ? null : remoteTarget.getAddress();
+            if (remoteAddress == null || !remoteAddress.startsWith(ProtonProtocolManager.MIRROR_ADDRESS)) {
+               //TODO: log address and fact it wasnt as expected, or handle any other addresses used
+               return;
+            }
+
+            //TODO: verify broker set expected link properties and desired capabilities.
+
+
+            if (linkOpens.incrementAndGet() != 2) {
+               //TODO: START delete between here, shouldnt be needed, once broker fixed to handle link refusal.
+               HashMap<Symbol, Object> linkProperties = new HashMap<>();
+               linkProperties.put(AMQPMirrorControllerSource.BROKER_ID, "fake-id");
+
+               serverReceiver.setProperties(linkProperties);
+               serverReceiver.setOfferedCapabilities(new Symbol[]{AMQPMirrorControllerSource.MIRROR_CAPABILITY});
+               //TODO: FINISH delete between here
+
+               serverReceiver.setTarget(null);
+
+               //TODO: START could delete between here
+               serverReceiver.setAutoAccept(false); // Dont accept.
+               serverReceiver.handler((del, msg) -> {
+                  refusedLinkMessageCount.incrementAndGet();
+                  System.out.println("Should not have got message on refused link: " + msg);
+               });
+
+               //      Adding exagerated delay between 'refusing attach' and following detach, and
+               //      didnt set prefetch to 0, so credit will be given during explicit open() (credit wouldnt be given if we
+               //      removed this and just let the close() cause the needed attach frame before sending the detach frame).
+               //      If removing, get rid of refusedLinkMessageCount and related usage since it then cant happen.
+               serverReceiver.open();
+
+               vertx.setTimer(5000, x -> {
+                  //TODO: reduce time if keeping, small but 'messages could still be sent' period.
+                  //TODO: FINISH could delete between here (remove block but keep lines in it below)
+
+                  serverReceiver.setCondition(new ErrorCondition(AmqpError.ILLEGAL_STATE, "Testing refusal of mirror link for $reasons"));
+                  serverReceiver.close();
+               });
+            } else {
+               HashMap<Symbol, Object> linkProperties = new HashMap<>();
+               linkProperties.put(AMQPMirrorControllerSource.BROKER_ID, "fake-id");
+
+               serverReceiver.setProperties(linkProperties);
+               serverReceiver.setOfferedCapabilities(new Symbol[]{AMQPMirrorControllerSource.MIRROR_CAPABILITY});
+
+               serverReceiver.handler((del, msg) -> {
+                  //TODO: log/handle (disable receiver auto-accept if wanting to control dispositions)
+                  System.out.println("Got message: " + msg);
+               });
+
+               serverReceiver.open();
+            }
+         });
+      });
+
+      try {
+         AMQPBrokerConnectConfiguration amqpConnection = new AMQPBrokerConnectConfiguration("test", "tcp://localhost:" + mockServer.actualPort()).setReconnectAttempts(3).setRetryInterval(10);
+         amqpConnection.addElement(new AMQPMirrorBrokerConnectionElement());
+         server.getConfiguration().addAMQPConnection(amqpConnection);
+         server.start();
+
+         Wait.assertEquals(1, disconnected::size, 6000);
+         Wait.assertEquals(2, connections::size, 6000);
+
+         assertSame(connections.get(0), disconnected.get(0));
+         assertFalse(connections.get(1).isDisconnected());
+
+         assertEquals("Should not have got any message on refused link", 0, refusedLinkMessageCount.get());
+      } finally {
+         mockServer.close();
+         vertx.close();
+      }
+   }
 }
