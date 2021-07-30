@@ -342,17 +342,25 @@ public class AMQPConnectionContext extends ProtonInitializable implements EventH
          } else {
             if (isReplicaTarget(receiver)) {
                try {
-                  protonSession.getSessionSPI().check(SimpleString.toSimpleString(link.getTarget().getAddress()), CheckType.SEND, getSecurityAuth());
-               } catch (ActiveMQSecurityException e) {
+                  try {
+                     protonSession.getSessionSPI().check(SimpleString.toSimpleString(link.getTarget().getAddress()), CheckType.SEND, getSecurityAuth());
+                  } catch (ActiveMQSecurityException e) {
+                     throw ActiveMQAMQPProtocolMessageBundle.BUNDLE.securityErrorCreatingProducer(e.getMessage());
+                  }
+
+                  if (!verifyDesiredCapabilities(receiver, AMQPMirrorControllerSource.MIRROR_CAPABILITY)) {
+                     throw ActiveMQAMQPProtocolMessageBundle.BUNDLE.missingDesiredCapability(AMQPMirrorControllerSource.MIRROR_CAPABILITY.toString());
+                  }
+               } catch (ActiveMQAMQPException e) {
+                  log.warn(e.getMessage(), e);
+
                   link.setTarget(null);
+                  link.setCondition(new ErrorCondition(e.getAmqpError(), e.getMessage()));
                   link.close();
-                  throw ActiveMQAMQPProtocolMessageBundle.BUNDLE.securityErrorCreatingProducer(e.getMessage());
+
+                  return;
                }
-               if (!verifyDesiredCapabilities(receiver, AMQPMirrorControllerSource.MIRROR_CAPABILITY)) {
-                  link.setTarget(null);
-                  link.close();
-                  throw ActiveMQAMQPProtocolMessageBundle.BUNDLE.missingDesiredCapability(AMQPMirrorControllerSource.MIRROR_CAPABILITY.toString());
-               }
+
                receiver.setOfferedCapabilities(new Symbol[]{AMQPMirrorControllerSource.MIRROR_CAPABILITY});
                protonSession.addReplicaTarget(receiver);
             } else {

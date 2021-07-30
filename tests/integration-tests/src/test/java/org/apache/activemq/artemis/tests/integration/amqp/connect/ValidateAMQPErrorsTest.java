@@ -54,6 +54,7 @@ import org.apache.activemq.artemis.utils.collections.ConcurrentHashSet;
 import org.apache.activemq.transport.amqp.client.AmqpClient;
 import org.apache.activemq.transport.amqp.client.AmqpConnection;
 import org.apache.activemq.transport.amqp.client.AmqpSession;
+import org.apache.activemq.transport.amqp.client.AmqpValidator;
 import org.apache.qpid.proton.amqp.Symbol;
 import org.apache.qpid.proton.amqp.messaging.Accepted;
 import org.apache.qpid.proton.amqp.transport.AmqpError;
@@ -61,6 +62,7 @@ import org.apache.qpid.proton.amqp.transport.ErrorCondition;
 import org.apache.qpid.proton.amqp.transport.Target;
 import org.apache.qpid.proton.engine.Link;
 import org.apache.qpid.proton.engine.Receiver;
+import org.apache.qpid.proton.engine.Sender;
 import org.apache.qpid.proton.engine.impl.ConnectionImpl;
 import org.jboss.logging.Logger;
 import org.junit.After;
@@ -593,27 +595,50 @@ public class ValidateAMQPErrorsTest extends AmqpClientTestSupport {
       assertEquals(0, errors.get()); // Meant to check again. the errors check before was because of connection issues. This one is about duplicates on receiving
    }
 
-   /**
-    * @throws Exception
-    */
    @Test
    public void testNoClientDesiredMirrorCapability() throws Exception {
       AssertionLoggerHandler.startCapture();
       server.start();
+
       AmqpClient client = new AmqpClient(new URI("tcp://localhost:" + AMQP_PORT), null, null);
+      client.setValidator(new AmqpValidator() {
+
+         @Override
+         public void inspectOpenedResource(Sender sender) {
+            ErrorCondition condition = sender.getRemoteCondition();
+
+            if (condition != null && condition.getCondition() != null) {
+               if (!condition.getCondition().equals(AmqpError.ILLEGAL_STATE)) {
+                  markAsInvalid("Should have been closed with an illegal state error, but error was: " + condition);
+               }
+
+               if (!condition.getDescription().contains("missing a desired capability declaration " + AMQPMirrorControllerSource.MIRROR_CAPABILITY)) {
+                  markAsInvalid("Should have indicated missing desired capability, but error was: " + condition);
+               }
+            } else {
+               markAsInvalid("Sender should have been detached with an error");
+            }
+         }
+      });
+
+      String address = ProtonProtocolManager.getMirrorAddress(getTestName());
+
       AmqpConnection connection = client.connect();
       try {
          AmqpSession session = connection.createSession();
-         Exception exception = null;
+
          try {
-            session.createSender(ProtonProtocolManager.getMirrorAddress("TEST"));
-         } catch (Exception e) {
-            exception = e;
+            session.createSender(address);
+            fail("Link should have been refused.");
+         } catch (Exception ex) {
+            instanceLog.debug("Caught expected exception");
          }
-         Assert.assertNotNull(exception);
+
+         connection.getStateInspector().assertValid();
       } finally {
          connection.close();
       }
+
       Wait.assertTrue(() -> AssertionLoggerHandler.findText("AMQ119024"));
    }
 }

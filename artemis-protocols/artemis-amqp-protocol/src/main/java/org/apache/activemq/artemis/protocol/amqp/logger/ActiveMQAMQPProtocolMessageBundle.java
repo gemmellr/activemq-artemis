@@ -107,7 +107,7 @@ public interface ActiveMQAMQPProtocolMessageBundle {
    ActiveMQBrokerConnectionException senderLinkRefused(String address);
 
    @Message(id = 119024, value = "link is missing a desired capability declaration {0}", format = Message.Format.MESSAGE_FORMAT)
-   ActiveMQBrokerConnectionException missingDesiredCapability(String capability);
+   ActiveMQAMQPIllegalStateException missingDesiredCapability(String capability);
 
 
 }
