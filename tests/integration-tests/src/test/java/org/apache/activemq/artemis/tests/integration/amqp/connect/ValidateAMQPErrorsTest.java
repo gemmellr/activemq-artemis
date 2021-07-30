@@ -50,11 +50,9 @@ import org.apache.activemq.artemis.protocol.amqp.connect.mirror.AMQPMirrorContro
 import org.apache.activemq.artemis.tests.integration.amqp.AmqpClientTestSupport;
 import org.apache.activemq.artemis.tests.util.CFUtil;
 import org.apache.activemq.artemis.tests.util.Wait;
-import org.apache.activemq.artemis.utils.SpawnedVMSupport;
 import org.apache.activemq.artemis.utils.collections.ConcurrentHashSet;
 import org.apache.activemq.transport.amqp.client.AmqpClient;
 import org.apache.activemq.transport.amqp.client.AmqpConnection;
-import org.apache.activemq.transport.amqp.client.AmqpSender;
 import org.apache.activemq.transport.amqp.client.AmqpSession;
 import org.apache.qpid.proton.amqp.Symbol;
 import org.apache.qpid.proton.amqp.messaging.Accepted;
@@ -82,25 +80,6 @@ public class ValidateAMQPErrorsTest extends AmqpClientTestSupport {
    protected Vertx vertx;
 
    protected MockServer mockServer;
-
-   public static void main(String[] arg) {
-      if (arg[0].equals("testClientMissingCapabilities")) {
-         try {
-            AmqpClient client = new AmqpClient(new URI("tcp://localhost:" + AMQP_PORT), null, null);
-            AmqpConnection connection = client.connect();
-            AmqpSession session = connection.createSession();
-            // The createSender here will block. That's the reason why we are using a separate process
-            // as the process wil die
-            // and we will just check if the log handler returned the error
-            AmqpSender sender = session.createSender(ProtonProtocolManager.getMirrorAddress("TEST"));
-            connection.close();
-
-         } catch (Exception e) {
-            System.exit(1);
-         }
-      }
-
-   }
 
    public void startVerx() {
       vertx = Vertx.vertx();
@@ -621,12 +600,20 @@ public class ValidateAMQPErrorsTest extends AmqpClientTestSupport {
    public void testNoClientDesiredMirrorCapability() throws Exception {
       AssertionLoggerHandler.startCapture();
       server.start();
-      Process process = null;
+      AmqpClient client = new AmqpClient(new URI("tcp://localhost:" + AMQP_PORT), null, null);
+      AmqpConnection connection = client.connect();
       try {
-         process = SpawnedVMSupport.spawnVM(ValidateAMQPErrorsTest.class.getName(), "testClientMissingCapabilities");
-         Wait.assertTrue(() -> AssertionLoggerHandler.findText("AMQ119024"));
+         AmqpSession session = connection.createSession();
+         Exception exception = null;
+         try {
+            session.createSender(ProtonProtocolManager.getMirrorAddress("TEST"));
+         } catch (Exception e) {
+            exception = e;
+         }
+         Assert.assertNotNull(exception);
       } finally {
-         process.destroyForcibly();
+         connection.close();
       }
+      Wait.assertTrue(() -> AssertionLoggerHandler.findText("AMQ119024"));
    }
 }
