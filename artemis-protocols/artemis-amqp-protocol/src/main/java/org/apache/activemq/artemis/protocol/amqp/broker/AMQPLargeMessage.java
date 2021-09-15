@@ -42,6 +42,7 @@ import org.apache.activemq.artemis.protocol.amqp.util.NettyReadable;
 import org.apache.activemq.artemis.protocol.amqp.util.NettyWritable;
 import org.apache.activemq.artemis.protocol.amqp.util.TLSEncode;
 import org.apache.activemq.artemis.utils.collections.TypedProperties;
+import org.apache.commons.lang3.NotImplementedException;
 import org.apache.qpid.proton.amqp.messaging.ApplicationProperties;
 import org.apache.qpid.proton.amqp.messaging.Header;
 import org.apache.qpid.proton.amqp.messaging.MessageAnnotations;
@@ -102,8 +103,6 @@ public class AMQPLargeMessage extends AMQPMessage implements LargeServerMessage 
     * This will be the case when restarting a server
     */
    private Boolean fileDurable;
-
-   private volatile AmqpReadableBuffer parsingData;
 
    private StorageManager storageManager;
 
@@ -306,11 +305,7 @@ public class AMQPLargeMessage extends AMQPMessage implements LargeServerMessage 
 
    @Override
    public ReadableBuffer getData() {
-      if (parsingData == null) {
-         throw new RuntimeException("AMQP Large Message is not open");
-      }
-
-      return parsingData;
+      throw new NotImplementedException("method not implemented. Do not use it with Large Messages");
    }
 
    public void parseHeader(ReadableBuffer buffer) {
@@ -404,11 +399,6 @@ public class AMQPLargeMessage extends AMQPMessage implements LargeServerMessage 
          parsingBuffer.append(data.duplicate());
          genericParseLargeMessage();
       }
-   }
-
-   @Override
-   public ReadableBuffer getSendBuffer(int deliveryCount, MessageReference reference) {
-      return getData().rewind();
    }
 
    @Override
