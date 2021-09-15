@@ -42,7 +42,6 @@ import org.apache.activemq.artemis.protocol.amqp.util.NettyReadable;
 import org.apache.activemq.artemis.protocol.amqp.util.NettyWritable;
 import org.apache.activemq.artemis.protocol.amqp.util.TLSEncode;
 import org.apache.activemq.artemis.utils.collections.TypedProperties;
-import org.apache.commons.lang3.NotImplementedException;
 import org.apache.qpid.proton.amqp.messaging.ApplicationProperties;
 import org.apache.qpid.proton.amqp.messaging.Header;
 import org.apache.qpid.proton.amqp.messaging.MessageAnnotations;
@@ -305,7 +304,7 @@ public class AMQPLargeMessage extends AMQPMessage implements LargeServerMessage 
 
    @Override
    public ReadableBuffer getData() {
-      throw new NotImplementedException("method not implemented. Do not use it with Large Messages");
+      throw new UnsupportedOperationException("Method not supported with Large Messages");
    }
 
    public void parseHeader(ReadableBuffer buffer) {
