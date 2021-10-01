@@ -108,7 +108,6 @@
                   <Embed-Dependency>*;scope=compile|runtime;groupId=org.apache.activemq</Embed-Dependency>
                   <Import-Package>
                      io.netty.buffer;io.netty.*;version="[4.1,5)",
-                     org.apache.johnzon.core,
                      *
                   </Import-Package>
                   <_exportcontents>org.apache.activemq.artemis.*;-noimport:=true</_exportcontents>

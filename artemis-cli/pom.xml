@@ -77,14 +77,6 @@
          <groupId>jakarta.inject</groupId>
          <artifactId>jakarta.inject-api</artifactId>
       </dependency>
-      <dependency>
-         <groupId>jakarta.jms</groupId>
-         <artifactId>jakarta.jms-api</artifactId>
-      </dependency>
-      <dependency>
-         <groupId>jakarta.json</groupId>
-         <artifactId>jakarta.json-api</artifactId>
-      </dependency>
       <!-- artemis producer and consumer can use amqp as the protocol -->
       <dependency>
          <groupId>org.apache.qpid</groupId>

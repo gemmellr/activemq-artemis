@@ -157,10 +157,6 @@
          <artifactId>commons-io</artifactId>
       </dependency>
       <dependency>
-         <groupId>jakarta.json</groupId>
-         <artifactId>jakarta.json-api</artifactId>
-      </dependency>
-      <dependency>
          <groupId>junit</groupId>
          <artifactId>junit</artifactId>
          <scope>test</scope>
