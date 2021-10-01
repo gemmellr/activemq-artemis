@@ -209,11 +209,6 @@
          <artifactId>mqtt-client</artifactId>
       </dependency>
       <dependency>
-         <groupId>jakarta.json</groupId>
-         <artifactId>jakarta.json-api</artifactId>
-         <scope>test</scope>
-      </dependency>
-      <dependency>
          <groupId>jakarta.resource</groupId>
          <artifactId>jakarta.resource-api</artifactId>
       </dependency>
@@ -228,11 +223,6 @@
       <dependency>
          <groupId>jakarta.management.j2ee</groupId>
          <artifactId>jakarta.management.j2ee-api</artifactId>
-      </dependency>
-      <dependency>
-         <groupId>org.apache.johnzon</groupId>
-         <artifactId>johnzon-core</artifactId>
-         <scope>test</scope>
       </dependency>
       <dependency>
          <groupId>io.netty</groupId>
