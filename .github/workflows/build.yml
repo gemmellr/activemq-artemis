@@ -31,7 +31,7 @@ jobs:
         uses: actions/setup-java@v2
         with:
           java-version: ${{ matrix.java }}
-          distribution: 'temurin'
+          distribution: 'zulu'
 
       # use 'install' so smoke-tests will work
       # By setting anything to org.apache.activemq.artemis.core.io.aio.AIOSequentialFileFactory.DISABLED we are disabling libaio loading on the testsuite
@@ -69,7 +69,7 @@ jobs:
         uses: actions/setup-java@v2
         with:
           java-version: ${{ matrix.java }}
-          distribution: 'temurin'
+          distribution: 'zulu'
 
       - name: Build Main
         run: |
