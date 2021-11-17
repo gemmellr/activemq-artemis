@@ -39,15 +39,11 @@
          <groupId>org.apache.johnzon</groupId>
          <artifactId>johnzon-core</artifactId>
          <version>${johnzon.version}</version>
-         <scope>compile</scope>
-         <optional>true</optional>
       </dependency>
       <dependency>
          <groupId>jakarta.json</groupId>
          <artifactId>jakarta.json-api</artifactId>
          <version>${jakarta.json-api.version}</version>
-         <scope>compile</scope>
-         <optional>true</optional>
          <!-- License: EPL 2.0 -->
       </dependency>
       <!-- ^^ these dependencies are shaded on this JAR -->
