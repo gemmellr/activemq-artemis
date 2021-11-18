@@ -453,6 +453,24 @@
             </exclusion>
          </exclusions>
       </dependency>
+
+
+      <!-- JOHNZON and json are shaded into commons.
+           however maven will still need this for tests
+           as the dependency graph will use unshaded bits in certain times.-->
+      <dependency>
+         <groupId>org.apache.johnzon</groupId>
+         <artifactId>johnzon-core</artifactId>
+         <version>${johnzon.version}</version>
+         <scope>test</scope>
+      </dependency>
+      <dependency>
+         <groupId>jakarta.json</groupId>
+         <artifactId>jakarta.json-api</artifactId>
+         <version>${jakarta.json-api.version}</version>
+         <scope>test</scope>
+      </dependency>
+
    </dependencies>
 
    <build>
