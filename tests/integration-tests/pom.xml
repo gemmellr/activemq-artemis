@@ -454,10 +454,10 @@
          </exclusions>
       </dependency>
 
-
-      <!-- JOHNZON and json are shaded into commons.
-           however maven will still need this for tests
-           as the dependency graph will use unshaded bits in certain times.-->
+      <!-- The johnzon-core and json-api contents are repackaged in -commons,
+           However maven can still need them during tests, which run against
+           the original -commons classes when built+run in the same reactor,
+           and not the jar containing the shaded bits. -->
       <dependency>
          <groupId>org.apache.johnzon</groupId>
          <artifactId>johnzon-core</artifactId>
