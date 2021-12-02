@@ -167,20 +167,29 @@ public class Wait {
                                  final long sleepMillis,
                                  final boolean printThreadDump) {
 
+      long elapsed = 0;
+      final long start = System.nanoTime();
+      final long durationNanos = TimeUnit.MILLISECONDS.toNanos(durationMillis);
+      final long sleepNanos = TimeUnit.MILLISECONDS.toNanos(sleepMillis);
+
       try {
-         final long expiry = System.nanoTime() + TimeUnit.MILLISECONDS.toNanos(durationMillis);
          boolean conditionSatisified = condition.isSatisfied();
-         while (!conditionSatisified && System.nanoTime() - expiry < 0) {
-            if (sleepMillis == 0) {
+         while (!conditionSatisified && (elapsed = System.nanoTime() - start) < durationNanos) {
+            if (sleepNanos == 0) {
                Thread.yield();
             } else {
-               LockSupport.parkNanos(TimeUnit.MILLISECONDS.toNanos(sleepMillis));
+               final long park = Math.min(sleepNanos, durationNanos - elapsed);
+
+               LockSupport.parkNanos(park);
             }
+
             conditionSatisified = condition.isSatisfied();
          }
+
          if (!conditionSatisified && printThreadDump) {
             System.out.println(ThreadDumpUtil.threadDump("thread dump"));
          }
+
          return conditionSatisified;
       } catch (Exception e) {
          throw new IllegalStateException(e);
