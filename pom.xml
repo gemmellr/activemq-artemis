@@ -73,6 +73,19 @@
    <name>ActiveMQ Artemis Parent</name>
    <url>https://activemq.apache.org/components/artemis/</url>
 
+   <repositories>
+     <repository>
+       <id>staging-repo</id>
+         <url>https://repository.apache.org/content/repositories/orgapacheqpid-1252</url>
+       <releases>
+         <enabled>true</enabled>
+       </releases>
+       <snapshots>
+         <enabled>false</enabled>
+       </snapshots>
+     </repository>
+  </repositories>
+
    <properties>
       <maven.compiler.source>11</maven.compiler.source>
       <maven.compiler.target>11</maven.compiler.target>
@@ -123,7 +136,7 @@
       <proton.version>0.34.0</proton.version>
       <slf4j.version>1.7.36</slf4j.version>
       <log4j.version>2.19.0</log4j.version>
-      <qpid.jms.version>1.7.0</qpid.jms.version>
+      <qpid.jms.version>1.8.0</qpid.jms.version>
       <johnzon.version>1.2.16</johnzon.version>
       <hawtbuff.version>1.11</hawtbuff.version>
       <airlift.version>0.8</airlift.version>
