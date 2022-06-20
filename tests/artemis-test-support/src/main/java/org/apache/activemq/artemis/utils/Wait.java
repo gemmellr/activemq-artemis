@@ -75,7 +75,8 @@ public class Wait {
 
       if (!result) {
          if (printThreadDump) {
-            System.out.println(ThreadDumpUtil.threadDump("thread dump"));
+            //TODO: never called with true
+            //System.out.println(ThreadDumpUtil.threadDump("thread dump"));
          }
          Assert.assertEquals(size.longValue(), condition.getCount());
       }
@@ -183,7 +184,8 @@ public class Wait {
             conditionSatisified = condition.isSatisfied();
          }
          if (!conditionSatisified && printThreadDump) {
-            System.out.println(ThreadDumpUtil.threadDump("thread dump"));
+            //TODO: never called with true
+            //System.out.println(ThreadDumpUtil.threadDump("thread dump"));
          }
          return conditionSatisified;
       } catch (Exception e) {

@@ -63,6 +63,14 @@
          <groupId>jakarta.jms</groupId>
          <artifactId>jakarta.jms-api</artifactId>
       </dependency>
+      <dependency>
+         <groupId>junit</groupId>
+         <artifactId>junit</artifactId>
+         <scope>compile</scope>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.logging</groupId>
+         <artifactId>jboss-logging</artifactId>
+      </dependency>
    </dependencies>
-
 </project>

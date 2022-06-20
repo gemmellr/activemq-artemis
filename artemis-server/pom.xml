@@ -119,9 +119,8 @@
          <version>${activemq-artemis-native-version}</version>
       </dependency>
       <dependency>
-         <groupId>org.apache.activemq</groupId>
-         <artifactId>artemis-core-client</artifactId>
-         <type>test-jar</type>
+         <groupId>org.apache.activemq.tests</groupId>
+         <artifactId>artemis-test-support</artifactId>
          <version>${project.version}</version>
          <scope>test</scope>
       </dependency>
@@ -214,13 +213,6 @@
          <artifactId>apacheds-jdbm2</artifactId>
          <version>${directory-jdbm2-version}</version>
          <scope>test</scope>
-      </dependency>
-      <dependency>
-         <groupId>org.apache.activemq</groupId>
-         <artifactId>artemis-commons</artifactId>
-         <version>${project.version}</version>
-         <scope>test</scope>
-         <type>test-jar</type>
       </dependency>
       <!-- db test -->
       <dependency>

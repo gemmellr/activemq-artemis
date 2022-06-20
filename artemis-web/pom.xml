@@ -69,10 +69,9 @@
          <version>${project.version}</version>
       </dependency>
       <dependency>
-         <groupId>org.apache.activemq</groupId>
-         <artifactId>artemis-commons</artifactId>
+         <groupId>org.apache.activemq.tests</groupId>
+         <artifactId>artemis-test-support</artifactId>
          <version>${project.version}</version>
-         <classifier>tests</classifier>
          <scope>test</scope>
       </dependency>
       <dependency>
