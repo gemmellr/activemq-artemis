@@ -34,27 +34,6 @@
    <dependencies>
       <dependency>
          <groupId>org.apache.activemq</groupId>
-         <artifactId>artemis-server</artifactId>
-         <version>${project.version}</version>
-         <scope>test</scope>
-         <type>test-jar</type>
-      </dependency>
-      <dependency>
-         <groupId>org.apache.activemq</groupId>
-         <artifactId>artemis-commons</artifactId>
-         <version>${project.version}</version>
-         <scope>test</scope>
-         <type>test-jar</type>
-      </dependency>
-      <dependency>
-         <groupId>org.apache.activemq.tests</groupId>
-         <artifactId>unit-tests</artifactId>
-         <version>${project.version}</version>
-         <scope>test</scope>
-         <type>test-jar</type>
-      </dependency>
-      <dependency>
-         <groupId>org.apache.activemq</groupId>
          <artifactId>artemis-core-client</artifactId>
          <version>${project.version}</version>
          <scope>test</scope>
