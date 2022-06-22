@@ -142,14 +142,7 @@
          <groupId>org.testcontainers</groupId>
          <artifactId>selenium</artifactId>
       </dependency>
-      <!-- this dependency is needed for CFUtil and other tools from integration-tests -->
-      <dependency>
-         <groupId>org.apache.activemq.tests</groupId>
-         <artifactId>integration-tests</artifactId>
-         <version>${project.version}</version>
-         <scope>test</scope>
-         <type>test-jar</type>
-      </dependency>
+
       <!-- quorum tests -->
       <dependency>
          <groupId>org.apache.curator</groupId>
@@ -197,6 +190,25 @@
          <artifactId>jakarta.json-api</artifactId>
          <scope>test</scope>
       </dependency>
+
+      <dependency>
+         <groupId>org.apache.httpcomponents</groupId>
+         <artifactId>httpclient</artifactId>
+      </dependency>
+
+      <dependency>
+         <groupId>org.apache.activemq.tests</groupId>
+         <artifactId>artemis-unit-test-support</artifactId>
+         <version>${project.version}</version>
+         <scope>test</scope>
+      </dependency>
+      <dependency>
+         <groupId>org.apache.activemq.tests</groupId>
+         <artifactId>artemis-test-support</artifactId>
+         <version>${project.version}</version>
+         <scope>test</scope>
+      </dependency>
+
    </dependencies>
 
    <build>

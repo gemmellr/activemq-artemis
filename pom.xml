@@ -164,6 +164,8 @@
       <postgresql.version>42.3.3</postgresql.version>
       <testcontainers.version>1.16.3</testcontainers.version>
       <exec-maven-plugin.version>3.0.0</exec-maven-plugin.version>
+      <apache.httpcore.version>4.4.13</apache.httpcore.version>
+      <apache.httpclient.version>4.5.13</apache.httpclient.version>
 
       <!-- for JakartaEE -->
       <version.batavia>1.0.10.Final</version.batavia>
@@ -1088,9 +1090,18 @@
             <version>${jackson.version}</version>
          </dependency>
 
+         <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpcore</artifactId>
+            <version>${apache.httpcore.version}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>${apache.httpclient.version}</version>
+         </dependency>
 
       </dependencies>
-
    </dependencyManagement>
 
    <profiles>
