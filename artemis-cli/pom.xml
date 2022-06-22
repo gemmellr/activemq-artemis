@@ -151,7 +151,7 @@
       </dependency>
       <dependency>
          <groupId>org.apache.activemq.tests</groupId>
-         <artifactId>artemis-test-support</artifactId>
+         <artifactId>artemis-unit-test-support</artifactId>
          <version>${project.version}</version>
          <scope>test</scope>
       </dependency>

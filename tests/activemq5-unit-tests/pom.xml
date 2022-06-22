@@ -122,7 +122,7 @@
       <!-- artemis modules -->
       <dependency>
          <groupId>org.apache.activemq.tests</groupId>
-         <artifactId>artemis-test-support</artifactId>
+         <artifactId>artemis-unit-test-support</artifactId>
          <version>${project.version}</version>
       </dependency>
 
