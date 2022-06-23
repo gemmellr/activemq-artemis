@@ -284,18 +284,6 @@
       </testResources>
       <plugins>
          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-jar-plugin</artifactId>
-            <executions>
-               <execution>
-                  <phase>test</phase>
-                  <goals>
-                     <goal>test-jar</goal>
-                  </goals>
-               </execution>
-            </executions>
-         </plugin>
-         <plugin>
             <groupId>org.apache.activemq</groupId>
             <artifactId>artemis-maven-plugin</artifactId>
             <executions>
