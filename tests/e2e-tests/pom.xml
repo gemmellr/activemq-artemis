@@ -79,14 +79,6 @@
          <scope>test</scope>
          <type>test-jar</type>
       </dependency>
-      <!-- this dependency is needed for JMX and maybe other tools from smoke-tests -->
-      <dependency>
-         <groupId>org.apache.activemq.tests</groupId>
-         <artifactId>smoke-tests</artifactId>
-         <version>${project.version}</version>
-         <scope>test</scope>
-         <type>test-jar</type>
-      </dependency>
    </dependencies>
 
    <build>
