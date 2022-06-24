@@ -19,11 +19,11 @@ package org.apache.activemq.artemis.utils;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SimpleTestPasswordCodec implements SensitiveDataCodec<String> {
+public class SimpleServerTestPasswordCodec implements SensitiveDataCodec<String> {
 
    private Map<String, String> passwordBook = new HashMap<>();
 
-   public SimpleTestPasswordCodec() {
+   public SimpleServerTestPasswordCodec() {
       passwordBook.put("momsword", "secret");
       passwordBook.put("youneverknow", "keypass");
       passwordBook.put("youcanguess", "trustpass");
