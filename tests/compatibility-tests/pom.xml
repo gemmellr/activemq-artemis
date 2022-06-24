@@ -119,7 +119,7 @@
          <version>${project.version}</version>
       </dependency>
       <dependency>
-         <groupId>org.apache.activemq.tests</groupId>
+         <groupId>org.apache.activemq</groupId>
          <artifactId>artemis-unit-test-support</artifactId>
          <version>${project.version}</version>
       </dependency>
