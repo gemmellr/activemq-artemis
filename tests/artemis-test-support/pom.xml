@@ -107,5 +107,13 @@
          <artifactId>jboss-logging</artifactId>
          <scope>provided</scope>
       </dependency>
+
+      <!-- This should be the only dependency not at 'provided' scope, for now -->
+      <dependency>
+         <groupId>org.apache.activemq</groupId>
+         <artifactId>artemis-server</artifactId>
+         <version>${project.version}</version>
+         <type>test-jar</type>
+      </dependency>
    </dependencies>
 </project>

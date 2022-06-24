@@ -34,13 +34,6 @@
 
    <dependencies>
       <dependency>
-         <groupId>org.apache.activemq</groupId>
-         <artifactId>artemis-server</artifactId>
-         <version>${project.version}</version>
-         <scope>test</scope>
-         <type>test-jar</type>
-      </dependency>
-      <dependency>
          <!-- this dependency is here to make sure this module is only executed
               after the distribution is created.
               Otherwise it will get here before the build eventually.
