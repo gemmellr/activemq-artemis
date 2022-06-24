@@ -27,7 +27,7 @@
    <name>ActiveMQ Artemis Unit Test Support</name>
 
    <properties>
-      <activemq.basedir>${project.basedir}/../..</activemq.basedir>
+      <activemq.basedir>${project.basedir}/..</activemq.basedir>
    </properties>
 
    <dependencies>
