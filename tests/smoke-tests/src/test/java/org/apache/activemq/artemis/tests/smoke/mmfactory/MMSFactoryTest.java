@@ -48,7 +48,6 @@ import org.apache.activemq.artemis.tests.util.CFUtil;
 import org.apache.activemq.artemis.utils.RandomUtil;
 import org.apache.activemq.artemis.utils.SpawnedVMSupport;
 import org.apache.activemq.artemis.utils.Wait;
-import org.apache.qpid.jms.JmsConnectionFactory;
 import org.jboss.logging.Logger;
 import org.junit.Before;
 import org.junit.Test;

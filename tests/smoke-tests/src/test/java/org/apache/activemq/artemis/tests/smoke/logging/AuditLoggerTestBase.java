@@ -16,13 +16,11 @@
  */
 package org.apache.activemq.artemis.tests.smoke.logging;
 
-import javax.jms.ConnectionFactory;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.PrintWriter;
 
 import org.apache.activemq.artemis.tests.smoke.common.SmokeTestBase;
-import org.apache.qpid.jms.JmsConnectionFactory;
 import org.junit.Before;
 
 public abstract class AuditLoggerTestBase extends SmokeTestBase {
