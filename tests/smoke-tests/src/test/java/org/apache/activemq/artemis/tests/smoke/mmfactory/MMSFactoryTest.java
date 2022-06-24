@@ -44,6 +44,7 @@ import org.apache.activemq.artemis.api.core.SimpleString;
 import org.apache.activemq.artemis.api.core.management.ObjectNameBuilder;
 import org.apache.activemq.artemis.api.core.management.QueueControl;
 import org.apache.activemq.artemis.tests.smoke.common.SmokeTestBase;
+import org.apache.activemq.artemis.tests.util.CFUtil;
 import org.apache.activemq.artemis.utils.RandomUtil;
 import org.apache.activemq.artemis.utils.SpawnedVMSupport;
 import org.apache.activemq.artemis.utils.Wait;
@@ -104,23 +105,6 @@ public class MMSFactoryTest extends SmokeTestBase {
 
    public static String getConsumerLog(int id) {
       return getServerLocation(SERVER_NAME_0) + "/data/" + "Consumer" + id + ".log";
-   }
-
-   public static ConnectionFactory createConnectionFactory(String protocol, String uri) {
-      if (protocol.toUpperCase().equals("OPENWIRE")) {
-         return new org.apache.activemq.ActiveMQConnectionFactory(uri);
-      } else if (protocol.toUpperCase().equals("AMQP")) {
-
-         if (uri.startsWith("tcp://")) {
-            // replacing tcp:// by amqp://
-            uri = "amqp" + uri.substring(3);
-         }
-         return new JmsConnectionFactory(uri);
-      } else if (protocol.toUpperCase().equals("CORE") || protocol.toUpperCase().equals("ARTEMIS")) {
-         return new org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory(uri);
-      } else {
-         throw new IllegalStateException("Unknown:" + protocol);
-      }
    }
 
    Process startConsumerProcess(String protocol,
@@ -200,7 +184,7 @@ public class MMSFactoryTest extends SmokeTestBase {
       AtomicInteger retryNumber = new AtomicInteger(0);
       int expectedTotalSize = 0;
 
-      ConnectionFactory factory = createConnectionFactory(theprotocol, "tcp://localhost:61616");
+      ConnectionFactory factory = CFUtil.createConnectionFactory(theprotocol, "tcp://localhost:61616");
       try (Connection connection = factory.createConnection()) {
          Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
          Topic queue = session.createTopic("MMFactory");
@@ -402,7 +386,7 @@ public class MMSFactoryTest extends SmokeTestBase {
       public void runListener() {
 
          //factory = createConnectionFactory(protocol, "tcp://localhost:61616?jms.prefetchPolicy.queuePrefetch=" + credits);
-         factory = createConnectionFactory(protocol, "tcp://localhost:61616");
+         factory = CFUtil.createConnectionFactory(protocol, "tcp://localhost:61616");
 
          System.out.println("Starting");
          connect();

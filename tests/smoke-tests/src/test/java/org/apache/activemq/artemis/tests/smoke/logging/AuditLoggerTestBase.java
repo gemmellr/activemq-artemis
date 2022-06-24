@@ -58,21 +58,4 @@ public abstract class AuditLoggerTestBase extends SmokeTestBase {
    protected void checkAuditLogRecord(boolean exist, String... values) throws Exception {
       checkLogRecord(getAuditLog(), exist, values);
    }
-
-   public static ConnectionFactory createConnectionFactory(String protocol, String uri) {
-      if (protocol.toUpperCase().equals("OPENWIRE")) {
-         return new org.apache.activemq.ActiveMQConnectionFactory(uri);
-      } else if (protocol.toUpperCase().equals("AMQP")) {
-
-         if (uri.startsWith("tcp://")) {
-            // replacing tcp:// by amqp://
-            uri = "amqp" + uri.substring(3);
-         }
-         return new JmsConnectionFactory(uri);
-      } else if (protocol.toUpperCase().equals("CORE") || protocol.toUpperCase().equals("ARTEMIS")) {
-         return new org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory(uri);
-      } else {
-         throw new IllegalStateException("Unknown:" + protocol);
-      }
-   }
 }
