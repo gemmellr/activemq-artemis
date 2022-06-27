@@ -38,16 +38,18 @@ import com.arjuna.ats.arjuna.coordinator.TxControl;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionManagerImple;
 import org.apache.activemq.artemis.api.jms.ActiveMQJMSClient;
 import org.apache.activemq.artemis.core.client.impl.ClientSessionInternal;
-import org.apache.activemq.artemis.tests.extras.ExtrasTestLogger;
 import org.apache.activemq.artemis.tests.util.JMSTestBase;
 import org.jboss.tm.TxUtils;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class XATest extends JMSTestBase {
 
+   private static final Logger logger = LoggerFactory.getLogger(XATest.class);
 
    protected TransactionManager tm;
 
@@ -89,9 +91,7 @@ public class XATest extends JMSTestBase {
       if (tm.getTransaction() != null) {
          Transaction tx = tm.suspend();
          if (tx != null) {
-            ExtrasTestLogger.LOGGER.warn("Transaction still associated with thread " + tx +
-                                            " at status " +
-                                            TxUtils.getStatusAsString(tx.getStatus()));
+            logger.warn("Transaction still associated with thread {} at status {}", tx, TxUtils.getStatusAsString(tx.getStatus()));
          }
       }
 
@@ -1319,7 +1319,7 @@ public class XATest extends JMSTestBase {
          // rollback will cause an attempt to deliver messages locally to the original consumers.
          // the original consumer has closed, so it will cancelled to the server
          // the server cancel is asynch, so we need to sleep for a bit to make sure it completes
-         ExtrasTestLogger.LOGGER.trace("Forcing failure");
+         logger.trace("Forcing failure");
          try {
             tm.commit();
             Assert.fail("should not get here");

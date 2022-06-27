@@ -186,22 +186,6 @@
          </exclusions>
       </dependency>
 
-       <!--
-           JBoss Logging
-       -->
-       <dependency>
-           <groupId>org.jboss.logging</groupId>
-           <artifactId>jboss-logging</artifactId>
-       </dependency>
-      <dependency>
-            <groupId>org.jboss.logmanager</groupId>
-            <artifactId>jboss-logmanager</artifactId>
-      </dependency>
-      <dependency>
-          <groupId>org.wildfly.common</groupId>
-          <artifactId>wildfly-common</artifactId>
-      </dependency>
-
       <!-- The johnzon-core and json-api contents are repackaged in -commons,
            However maven can still need them during tests, which run against
            the original -commons classes when built+run in the same reactor,
