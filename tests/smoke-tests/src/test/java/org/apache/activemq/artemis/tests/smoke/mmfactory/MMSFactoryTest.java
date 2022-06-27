@@ -48,16 +48,17 @@ import org.apache.activemq.artemis.tests.util.CFUtil;
 import org.apache.activemq.artemis.utils.RandomUtil;
 import org.apache.activemq.artemis.utils.SpawnedVMSupport;
 import org.apache.activemq.artemis.utils.Wait;
-import org.jboss.logging.Logger;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @RunWith(Parameterized.class)
 public class MMSFactoryTest extends SmokeTestBase {
 
-   private static final Logger logger = Logger.getLogger(MMSFactoryTest.class);
+   private static final Logger logger = LoggerFactory.getLogger(MMSFactoryTest.class);
 
    public static final String SERVER_NAME_0 = "mmfactory";
    private static final String JMX_SERVER_HOSTNAME = "localhost";
@@ -128,7 +129,7 @@ public class MMSFactoryTest extends SmokeTestBase {
    public void testMMSorting() throws Exception {
       for (int i = 0; i < restarts; i++) {
          logger.debug("*******************************************************************************************************************************");
-         logger.debug("Starting " + clientRuns);
+         logger.debug("Starting {}", clientRuns);
          logger.debug("*******************************************************************************************************************************");
          testMMSorting(clientRuns * i, clientRuns * (i + 1));
 
@@ -214,7 +215,7 @@ public class MMSFactoryTest extends SmokeTestBase {
                      consumers[1].destroyForcibly();
                      consumers[1] = startConsumerProcess(theprotocol, timeForConsumers[1], "MMFactory::MMConsumer", 100, 1);
                      logger.debug("...Reconnected");
-                     logger.debug("retry=" + retryNumber + ",sent=" + i + ", acked on this batch = " + (queueControl.getMessagesAcknowledged() - (retryNumber.get() * BATCH_SIZE * 2)) + ", total acked = " + queueControl.getMessagesAcknowledged());
+                     logger.debug("retry={},sent={}, acked on this batch = {}, total acked = {}", retryNumber, i, (queueControl.getMessagesAcknowledged() - (retryNumber.get() * BATCH_SIZE * 2)), queueControl.getMessagesAcknowledged());
                   }
                   TextMessage message = session.createTextMessage("This is blue " + largeString);
                   message.setStringProperty("color", "blue");
@@ -227,7 +228,7 @@ public class MMSFactoryTest extends SmokeTestBase {
                   mmsFactory.send(message);
 
                   if (i % 10 == 0) {
-                     logger.debug("Sending " + i + " run = " + run);
+                     logger.debug("Sending {} run = {}", i, run);
                   }
 
                   if (i == 0) {
@@ -248,7 +249,7 @@ public class MMSFactoryTest extends SmokeTestBase {
                   if ((queueControl.getMessagesAcknowledged() + queueControl.getMessagesKilled() + queueControl.getMessagesExpired()) - (retryNumber.get() * BATCH_SIZE * 2) > (BATCH_SIZE * 2 - 500)) {
                      return true;
                   } else {
-                     logger.debug("Received " + queueControl.getMessagesAcknowledged());
+                     logger.debug("Received {}", queueControl.getMessagesAcknowledged());
                      return false;
                   }
                }, 45_000, 1_000);
@@ -265,7 +266,7 @@ public class MMSFactoryTest extends SmokeTestBase {
                for (int i = 0; i < consumers.length; i++) {
                   File file = new File(getConsumerLog(i));
                   if (!file.delete()) {
-                     logger.debug("not possible to remove " + file);
+                     logger.debug("not possible to remove {}", file);
                   }
                }
                for (int r = 0; r < consumers.length; r++) {
@@ -285,13 +286,13 @@ public class MMSFactoryTest extends SmokeTestBase {
             for (int i = 0; i < consumers.length; i++) {
                File file = new File(getConsumerLog(i));
                if (!file.delete()) {
-                  logger.warn("not possible to remove " + file);
+                  logger.warn("not possible to remove {}", file);
                }
             }
 
             File file = new File(getConsumerLog(1000)); //the DLQ processing ID used
             if (!file.delete()) {
-               logger.warn("not possible to remove " + file);
+               logger.warn("not possible to remove {}", file);
             }
          }
       }
@@ -302,10 +303,10 @@ public class MMSFactoryTest extends SmokeTestBase {
       Wait.waitFor(() -> {
 
          if (lastTime.get() == queueControl.getMessagesAcknowledged()) {
-            logger.debug("Waiting some change on " + queueControl.getMessagesAcknowledged() + " with messages Added = " + queueControl.getMessagesAdded() + " and killed = " + queueControl.getMessagesKilled());
+            logger.debug("Waiting some change on {} with messages Added = {} and killed = {}", queueControl.getMessagesAcknowledged(), queueControl.getMessagesAdded(), queueControl.getMessagesKilled());
             return false;
          } else {
-            logger.debug("Condition met! with " + queueControl.getMessagesAcknowledged() + " with messages Added = " + queueControl.getMessagesAdded() + " and killed = " + queueControl.getMessagesKilled());
+            logger.debug("Condition met! with {} with messages Added = {} and killed = {}", queueControl.getMessagesAcknowledged(), queueControl.getMessagesAdded(), queueControl.getMessagesKilled());
             lastTime.set((int)queueControl.getMessagesAcknowledged());
             return true;
          }
@@ -346,7 +347,7 @@ public class MMSFactoryTest extends SmokeTestBase {
             String color = message.getStringProperty("color");
             int messageSequence = message.getIntProperty("i");
             if (queuename.equals("DLQ")) {
-               logger.debug("Processing DLQ on color=" + color + ", sequence=" + messageSequence);
+               logger.debug("Processing DLQ on color={}, sequence={}", color, messageSequence);
             } else if (slowTime > 0) {
                Thread.sleep(slowTime);
             }
