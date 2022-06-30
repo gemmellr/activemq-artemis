@@ -23,10 +23,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: |
-            ~/.m2/repository/*/*/*/*/*
-            !~/.m2/repository/org/apache/activemq/**/*-SNAPSHOT
-            !~/.m2/repository/org/apache/activemq/examples
-            !~/.m2/repository/org/apache/activemq/tests
+            ~/.m2/repository/
           key: ${{ runner.os }}-maven-test-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-test-
@@ -51,6 +48,16 @@ jobs:
         run: |
           if [ -d ~/.m2/repository ]; then ls -lR ~/.m2/repository; else echo "Directory doesnt exist"; fi
 
+      - name: Clean Up Before Caching
+        run: |
+          rm -rf ~/.m2/repository/org/apache/activemq/tests
+          rm -rf ~/.m2/repository/org/apache/activemq/examples
+          if [ -d ~/.m2/repository/org/apache/activemq ]; then find ~/.m2/repository/org/apache/activemq -name "*-SNAPSHOT" -type d -prune -exec rm -r '{}' \; ; fi
+
+      - name: Show Cache Contents After Cleanup
+        run: |
+          if [ -d ~/.m2/repository ]; then ls -lR ~/.m2/repository; else echo "Directory doesnt exist"; fi
+
   checks:
     name: Checks (${{ matrix.java }})
     runs-on: ubuntu-18.04
@@ -71,10 +78,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: |
-            ~/.m2/repository/*/*/*/*/*
-            !~/.m2/repository/org/apache/activemq/**/*-SNAPSHOT
-            !~/.m2/repository/org/apache/activemq/examples
-            !~/.m2/repository/org/apache/activemq/tests
+            ~/.m2/repository/
           key: ${{ runner.os }}-maven-checks-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-checks-
@@ -122,5 +126,15 @@ jobs:
           mvn -s .github/maven-settings.xml clean install -DskipTests -Prelease -am -pl "artemis-website"
 
       - name: Show Cache Contents After Checks
+        run: |
+          if [ -d ~/.m2/repository ]; then ls -lR ~/.m2/repository; else echo "Directory doesnt exist"; fi
+
+      - name: Clean Up Before Caching
+        run: |
+          rm -rf ~/.m2/repository/org/apache/activemq/tests
+          rm -rf ~/.m2/repository/org/apache/activemq/examples
+          if [ -d ~/.m2/repository/org/apache/activemq ]; then find ~/.m2/repository/org/apache/activemq -name "*-SNAPSHOT" -type d -prune -exec rm -r '{}' \; ; fi
+
+      - name: Show Cache Contents After Cleanup
         run: |
           if [ -d ~/.m2/repository ]; then ls -lR ~/.m2/repository; else echo "Directory doesnt exist"; fi
