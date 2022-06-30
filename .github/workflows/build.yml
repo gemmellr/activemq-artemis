@@ -14,6 +14,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Show Cache Contents Before Restore
+        run: |
+          if [ -d ~/.m2/repository ]; then ls -lR ~/.m2/repository; else echo "Directory doesnt exist"; fi
+
       - name: Cache Maven Local Repo
         if: ${{ !startsWith(github.ref, 'refs/tags/') }}
         uses: actions/cache@v2
@@ -33,12 +37,19 @@ jobs:
           java-version: ${{ matrix.java }}
           distribution: 'temurin'
 
+      - name: Show Cache Contents After Restore
+        run: |
+          if [ -d ~/.m2/repository ]; then ls -lR ~/.m2/repository; else echo "Directory doesnt exist"; fi
+
       # use 'install' so smoke-tests will work
       # By setting anything to org.apache.activemq.artemis.core.io.aio.AIOSequentialFileFactory.DISABLED we are disabling libaio loading on the testsuite
       - name: Fast Tests
         run: |
           mvn -s .github/maven-settings.xml -Dorg.apache.activemq.artemis.core.io.aio.AIOSequentialFileFactory.DISABLED=AnythingNotNull -Pfast-tests -Ptests-CI install
 
+      - name: Show Cache Contents After Tests
+        run: |
+          if [ -d ~/.m2/repository ]; then ls -lR ~/.m2/repository; else echo "Directory doesnt exist"; fi
 
   checks:
     name: Checks (${{ matrix.java }})
@@ -50,6 +61,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+
+      - name: Show Cache Contents Before Restore
+        run: |
+          if [ -d ~/.m2/repository ]; then ls -lR ~/.m2/repository; else echo "Directory doesnt exist"; fi
 
       - name: Cache Maven Local Repo
         if: ${{ !startsWith(github.ref, 'refs/tags/') }}
@@ -70,6 +85,10 @@ jobs:
         with:
           java-version: ${{ matrix.java }}
           distribution: 'temurin'
+
+      - name: Show Cache Contents After Restore
+        run: |
+          if [ -d ~/.m2/repository ]; then ls -lR ~/.m2/repository; else echo "Directory doesnt exist"; fi
 
       - name: Build Main
         run: |
@@ -101,3 +120,7 @@ jobs:
         if: matrix.java == '11'
         run: |
           mvn -s .github/maven-settings.xml clean install -DskipTests -Prelease -am -pl "artemis-website"
+
+      - name: Show Cache Contents After Checks
+        run: |
+          if [ -d ~/.m2/repository ]; then ls -lR ~/.m2/repository; else echo "Directory doesnt exist"; fi
