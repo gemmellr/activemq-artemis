@@ -24,9 +24,9 @@ jobs:
         with:
           path: |
             ~/.m2/repository/
-          key: ${{ runner.os }}-maven-test-${{ hashFiles('**/pom.xml') }}
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
-            ${{ runner.os }}-maven-test-
+            ${{ runner.os }}-maven-
 
       - name: Install JDK ${{ matrix.java }}
         uses: actions/setup-java@v2
@@ -79,10 +79,9 @@ jobs:
         with:
           path: |
             ~/.m2/repository/
-          key: ${{ runner.os }}-maven-checks-${{ hashFiles('**/pom.xml') }}
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
-            ${{ runner.os }}-maven-checks-
-            ${{ runner.os }}-maven-test-
+            ${{ runner.os }}-maven-
 
       - name: Install JDK ${{ matrix.java }}
         uses: actions/setup-java@v2
