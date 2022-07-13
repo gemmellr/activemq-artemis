@@ -2008,4 +2008,16 @@
          </snapshots>
       </repository>
    </repositories> -->
+
+   <!-- TODO: DELETE once 2.0.0 released -->
+   <repositories>
+      <repository>
+         <id>artemis-native-2.0.0-staging-repo</id>
+         <layout>default</layout>
+         <url>https://repository.apache.org/content/repositories/orgapacheactivemq-1257/</url>
+         <snapshots>
+            <enabled>false</enabled>
+         </snapshots>
+      </repository>
+   </repositories>
 </project>
