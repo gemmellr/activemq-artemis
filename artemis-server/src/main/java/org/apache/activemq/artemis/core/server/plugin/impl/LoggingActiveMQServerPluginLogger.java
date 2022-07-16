@@ -80,8 +80,8 @@ public interface LoggingActiveMQServerPluginLogger {
                           boolean removeConsumers,
                           boolean autoDeleteAddress);
 
-   @LogMessage(id = 841009, value = "sent message with ID: {}, session name: {}, session connectionID: {}, result: {}", level = LogMessage.Level.INFO)
-   void afterSend(String messageID, String sessionName, String sessionConnectionID, RoutingStatus result);
+   @LogMessage(id = 841009, value = "sent message with ID: {}, result: {}, transaction: {}", level = LogMessage.Level.INFO)
+   void afterSend(String messageID, RoutingStatus result, String tx);
 
    @LogMessage(id = 841010, value = "routed message with ID: {}, result: {}", level = LogMessage.Level.INFO)
    void afterMessageRoute(String messageID, RoutingStatus result);
@@ -99,8 +99,8 @@ public interface LoggingActiveMQServerPluginLogger {
    @LogMessage(id = 841013, value = "expired message: {}, messageExpiryAddress: {}", level = LogMessage.Level.INFO)
    void messageExpired(MessageReference message, SimpleString messageExpiryAddress);
 
-   @LogMessage(id = 841014, value = "acknowledged message ID: {}, messageRef sessionID: {}, with messageRef consumerID: {}, messageRef QueueName: {}," + "  with ackReason: {}", level = LogMessage.Level.INFO)
-   void messageAcknowledged(String messageID, String sessionID, String consumerID, String queueName, AckReason reason);
+   @LogMessage(id = 841014, value = "acknowledged message: {}, with transaction: {}", level = LogMessage.Level.INFO)
+   void messageAcknowledged(MessageReference ref, Transaction tx);
 
    @LogMessage(id = 841015, value = "deployed bridge: {}", level = LogMessage.Level.INFO)
    void afterDeployBridge(Bridge config);
@@ -164,12 +164,12 @@ public interface LoggingActiveMQServerPluginLogger {
                    boolean direct,
                    boolean noAutoCreateQueue);
 
-   @LogMessage(id = 843009, value = "message ID: {}, message {}, session name: {} with tx: {}, session: {}, direct: {}," + " noAutoCreateQueue: {}", level = LogMessage.Level.DEBUG)
-   void afterSendDetails(String messageID,
-                         org.apache.activemq.artemis.api.core.Message message,
-                         String sessionName,
+   @LogMessage(id = 843009, value = "afterSend message: {}, result: {}, transaction: {}, session: {}, connection: {}, direct: {}, noAutoCreateQueue: {}", level = LogMessage.Level.DEBUG)
+   void afterSendDetails(org.apache.activemq.artemis.api.core.Message message,
+                         String result,
                          Transaction tx,
-                         ServerSession session,
+                         String sessionName,
+                         String connectionID,
                          boolean direct,
                          boolean noAutoCreateQueue);
 
@@ -197,8 +197,8 @@ public interface LoggingActiveMQServerPluginLogger {
                             MessageReference reference,
                             ServerConsumer consumer);
 
-   @LogMessage(id = 843014, value = "acknowledged message: {}, with ackReason: {}", level = LogMessage.Level.DEBUG)
-   void messageAcknowledgedDetails(MessageReference ref, AckReason reason);
+   @LogMessage(id = 843014, value = "messageAcknowledged ID: {}, sessionID: {}, consumerID: {}, queue: {}, transaction: {}, ackReason: {}", level = LogMessage.Level.DEBUG)
+   void messageAcknowledgedDetails(String messageID, String sessionID, String consumerID, String queueName, String tx, AckReason reason);
 
    @LogMessage(id = 843015, value = "beforeDeployBridge called with bridgeConfiguration: {}", level = LogMessage.Level.DEBUG)
    void beforeDeployBridge(BridgeConfiguration config);
@@ -218,4 +218,6 @@ public interface LoggingActiveMQServerPluginLogger {
                                    boolean direct,
                                    boolean rejectDuplicates);
 
+   @LogMessage(id = 843018, value = "rolled back transaction {} involving {}", level = LogMessage.Level.DEBUG)
+   void rolledBackTransaction(Transaction tx, String resource);
 }
