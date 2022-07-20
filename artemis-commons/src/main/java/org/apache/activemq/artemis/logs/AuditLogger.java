@@ -2134,7 +2134,7 @@ public interface AuditLogger {
       MESSAGE_LOGGER.coreSendMessage(getCaller(user, remoteAddress), messageToString, context, tx);
    }
 
-   @LogMessage(id = 601500, value = "User {0} sent a message {1}, context: {2}, transaction: {3}", level = LogMessage.Level.INFO)
+   @LogMessage(id = 601500, value = "User {} sent a message {}, context: {}, transaction: {}", level = LogMessage.Level.INFO)
    void coreSendMessage(String user, String messageToString, Object context, String tx);
 
    //hot path log using a different logger
