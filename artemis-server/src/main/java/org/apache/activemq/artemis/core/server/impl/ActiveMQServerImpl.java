@@ -1311,7 +1311,7 @@ public class ActiveMQServerImpl implements ActiveMQServer {
          try {
             activation.preStorageClose();
          } catch (Throwable t) {
-            ActiveMQServerLogger.LOGGER.errorStoppingComponent(t, activation.getClass().getName());
+            ActiveMQServerLogger.LOGGER.errorStoppingComponent(activation.getClass().getName(), t);
          }
       }
 
@@ -1321,7 +1321,7 @@ public class ActiveMQServerImpl implements ActiveMQServer {
          try {
             storageManager.stop(criticalIOError, failoverOnServerShutdown);
          } catch (Throwable t) {
-            ActiveMQServerLogger.LOGGER.errorStoppingComponent(t, storageManager.getClass().getName());
+            ActiveMQServerLogger.LOGGER.errorStoppingComponent(storageManager.getClass().getName(), t);
          }
 
       // We stop remotingService before otherwise we may lock the system in case of a critical IO
@@ -1331,7 +1331,7 @@ public class ActiveMQServerImpl implements ActiveMQServer {
          try {
             remotingService.stop(criticalIOError);
          } catch (Throwable t) {
-            ActiveMQServerLogger.LOGGER.errorStoppingComponent(t, remotingService.getClass().getName());
+            ActiveMQServerLogger.LOGGER.errorStoppingComponent(remotingService.getClass().getName(), t);
          }
 
       // Stop the management service after the remoting service to ensure all acceptors are deregistered with JMX
@@ -1340,7 +1340,7 @@ public class ActiveMQServerImpl implements ActiveMQServer {
          try {
             managementService.unregisterServer();
          } catch (Throwable t) {
-            ActiveMQServerLogger.LOGGER.errorStoppingComponent(t, managementService.getClass().getName());
+            ActiveMQServerLogger.LOGGER.errorStoppingComponent(managementService.getClass().getName(), t);
          }
 
       stopComponent(managementService);
@@ -1373,7 +1373,7 @@ public class ActiveMQServerImpl implements ActiveMQServer {
          try {
             securityStore.stop();
          } catch (Throwable t) {
-            ActiveMQServerLogger.LOGGER.errorStoppingComponent(t, securityStore.getClass().getName());
+            ActiveMQServerLogger.LOGGER.errorStoppingComponent(securityStore.getClass().getName(), t);
          }
       }
 
@@ -1402,7 +1402,7 @@ public class ActiveMQServerImpl implements ActiveMQServer {
          try {
             activation.close(failoverOnServerShutdown, restarting);
          } catch (Throwable t) {
-            ActiveMQServerLogger.LOGGER.errorStoppingComponent(t, activation.getClass().getName());
+            ActiveMQServerLogger.LOGGER.errorStoppingComponent(activation.getClass().getName(), t);
          }
       }
 
@@ -1541,7 +1541,7 @@ public class ActiveMQServerImpl implements ActiveMQServer {
             component.stop();
          }
       } catch (Throwable t) {
-         ActiveMQServerLogger.LOGGER.errorStoppingComponent(t, component.getClass().getName());
+         ActiveMQServerLogger.LOGGER.errorStoppingComponent(component.getClass().getName(), t);
       }
    }
 
@@ -4497,7 +4497,7 @@ public class ActiveMQServerImpl implements ActiveMQServer {
                   externalComponent.stop();
                }
             } catch (Exception e) {
-               ActiveMQServerLogger.LOGGER.errorStoppingComponent(e, externalComponent.getClass().getName());
+               ActiveMQServerLogger.LOGGER.errorStoppingComponent(externalComponent.getClass().getName(), e);
             }
          }
       }
