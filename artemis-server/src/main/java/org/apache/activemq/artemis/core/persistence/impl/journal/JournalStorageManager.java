@@ -342,7 +342,7 @@ public class JournalStorageManager extends AbstractJournalStorageManager {
             try {
                msg.delete();
             } catch (Exception e) {
-               ActiveMQServerLogger.LOGGER.journalErrorDeletingMessage(e, messageId);
+               ActiveMQServerLogger.LOGGER.journalErrorDeletingMessage(messageId, e);
             }
             if (replicator != null) {
                replicator.largeMessageDelete(messageId, JournalStorageManager.this);
@@ -511,7 +511,7 @@ public class JournalStorageManager extends AbstractJournalStorageManager {
                   confirmLargeMessage(largeServerMessage);
                }
             } catch (Exception e) {
-               ActiveMQServerLogger.LOGGER.journalErrorDeletingMessage(e, largeServerMessage.toMessage().getMessageID());
+               ActiveMQServerLogger.LOGGER.journalErrorDeletingMessage(largeServerMessage.toMessage().getMessageID(), e);
             }
          }
 
