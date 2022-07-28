@@ -25,12 +25,9 @@ import org.eclipse.paho.mqttv5.client.MqttClient;
 import org.eclipse.paho.mqttv5.client.MqttConnectionOptions;
 import org.eclipse.paho.mqttv5.client.MqttConnectionOptionsBuilder;
 import org.eclipse.paho.mqttv5.common.MqttException;
-import org.jboss.logging.Logger;
 import org.junit.Test;
 
 public class PublishTestsWithSecurity extends MQTT5TestSupport {
-
-   private static final Logger log = Logger.getLogger(PublishTestsWithSecurity.class);
 
    public PublishTestsWithSecurity(String protocol) {
       super(protocol);
