@@ -340,8 +340,6 @@
                      <libList>
                         <arg>org.apache.activemq.tests:compatibility-tests:${project.version}</arg>
                      </libList>
-                     <!-- for future maintainers, notice that if you add new variables you also need to add the system property
-                           otherwise this is not captured, search for the word @@@@ on this pom where I left anothr comment -->
                      <file>${basedir}/target/ARTEMIS-263.cp</file>
                   </configuration>
                </execution>
@@ -364,8 +362,6 @@
                      <libList>
                         <arg>org.apache.activemq.tests:compatibility-tests:${project.version}</arg>
                      </libList>
-                     <!-- for future maintainers, notice that if you add new variables you also need to add the system property
-                           otherwise this is not captured, search for the word @@@@ on this pom where I left anothr comment -->
                      <file>${basedir}/target/ARTEMIS-270.cp</file>
                   </configuration>
                </execution>
@@ -390,8 +386,6 @@
                      <libList>
                         <arg>org.apache.activemq.tests:compatibility-tests:${project.version}</arg>
                      </libList>
-                     <!-- for future maintainers, notice that if you add new variables you also need to add the system property
-                           otherwise this is not captured, search for the word @@@@ on this pom where I left anothr comment -->
                      <file>${basedir}/target/ARTEMIS-2_10_0.cp</file>
                   </configuration>
                </execution>
@@ -416,8 +410,6 @@
                      <libList>
                         <arg>org.apache.activemq.tests:compatibility-tests:${project.version}</arg>
                      </libList>
-                     <!-- for future maintainers, notice that if you add new variables you also need to add the system property
-                           otherwise this is not captured, search for the word @@@@ on this pom where I left anothr comment -->
                      <file>${basedir}/target/ARTEMIS-2_17_0.cp</file>
                   </configuration>
                </execution>               <execution>
@@ -441,8 +433,6 @@
                   <libList>
                      <arg>org.apache.activemq.tests:compatibility-tests:${project.version}</arg>
                   </libList>
-                  <!-- for future maintainers, notice that if you add new variables you also need to add the system property
-                        otherwise this is not captured, search for the word @@@@ on this pom where I left anothr comment -->
                   <file>${basedir}/target/ARTEMIS-2_18_0.cp</file>
                </configuration>
             </execution>
@@ -468,8 +458,6 @@
                      <libList>
                         <arg>org.apache.activemq.tests:compatibility-tests:${project.version}</arg>
                      </libList>
-                     <!-- for future maintainers, notice that if you add new variables you also need to add the system property
-                           otherwise this is not captured, search for the word @@@@ on this pom where I left anothr comment -->
                      <file>${basedir}/target/ARTEMIS-2_22_0.cp</file>
                   </configuration>
                </execution>
@@ -493,8 +481,6 @@
                      <libList>
                         <arg>org.apache.activemq.tests:compatibility-tests:${project.version}</arg>
                      </libList>
-                     <!-- for future maintainers, notice that if you add new variables you also need to add the system property
-                           otherwise this is not captured, search for the word @@@@ on this pom where I left anothr comment -->
                      <file>${basedir}/target/ARTEMIS-240.cp</file>
                   </configuration>
                </execution>
@@ -518,8 +504,6 @@
                      <libList>
                         <arg>org.apache.activemq.tests:compatibility-tests:${project.version}</arg>
                      </libList>
-                     <!-- for future maintainers, notice that if you add new variables you also need to add the system property
-                           otherwise this is not captured, search for the word @@@@ on this pom where I left anothr comment -->
                      <file>${basedir}/target/ARTEMIS-210.cp</file>
                   </configuration>
                </execution>
@@ -543,8 +527,6 @@
                      <libList>
                         <arg>org.apache.activemq.tests:compatibility-tests:${project.version}</arg>
                      </libList>
-                     <!-- for future maintainers, notice that if you add new variables you also need to add the system property
-                           otherwise this is not captured, search for the word @@@@ on this pom where I left anothr comment -->
                      <file>${basedir}/target/ARTEMIS-200.cp</file>
                   </configuration>
                </execution>
@@ -567,8 +549,6 @@
                      <libList>
                         <arg>org.apache.activemq.tests:compatibility-tests:${project.version}</arg>
                      </libList>
-                     <!-- for future maintainers, notice that if you add new variables you also need to add the system property
-                           otherwise this is not captured, search for the word @@@@ on this pom where I left anothr comment -->
                      <file>${basedir}/target/ARTEMIS-140.cp</file>
                   </configuration>
                </execution>
@@ -592,8 +572,6 @@
                      <libList>
                         <arg>org.apache.activemq.tests:compatibility-tests:${project.version}</arg>
                      </libList>
-                     <!-- for future maintainers, notice that if you add new variables you also need to add the system property
-                           otherwise this is not captured, search for the word @@@@ on this pom where I left anothr comment -->
                      <file>${basedir}/target/ARTEMIS-155.cp</file>
                   </configuration>
                </execution>
@@ -617,8 +595,6 @@
                      <libList>
                         <arg>org.apache.activemq.tests:compatibility-tests:${project.version}</arg>
                      </libList>
-                     <!-- for future maintainers, notice that if you add new variables you also need to add the system property
-                           otherwise this is not captured, search for the word @@@@ on this pom where I left anothr comment -->
                      <file>${basedir}/target/HORNETQ-235.cp</file>
                   </configuration>
                </execution>
@@ -642,8 +618,6 @@
                      <libList>
                         <arg>org.apache.activemq.tests:compatibility-tests:${project.version}</arg>
                      </libList>
-                     <!-- for future maintainers, notice that if you add new variables you also need to add the system property
-                           otherwise this is not captured, search for the word @@@@ on this pom where I left anothr comment -->
                      <file>${basedir}/target/HORNETQ-247.cp</file>
                   </configuration>
                </execution>
@@ -663,8 +637,6 @@
                      <libList>
                         <arg>org.apache.activemq.tests:compatibility-tests:${project.version}</arg>
                      </libList>
-                     <!-- for future maintainers, notice that if you add new variables you also need to add the system property
-                           otherwise this is not captured, search for the word @@@@ on this pom where I left anothr comment -->
                      <file>${basedir}/target/AMQ_5_11.cp</file>
                   </configuration>
                </execution>
