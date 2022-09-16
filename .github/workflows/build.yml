@@ -34,7 +34,7 @@ jobs:
       # By setting anything to org.apache.activemq.artemis.core.io.aio.AIOSequentialFileFactory.DISABLED we are disabling libaio loading on the testsuite
       - name: Fast Tests
         run: |
-          mvn -s .github/maven-settings.xml -Dorg.apache.activemq.artemis.core.io.aio.AIOSequentialFileFactory.DISABLED=AnythingNotNull -Pfast-tests -Ptests-CI install
+          mvn -s .github/maven-settings.xml --update-snapshots -Dorg.apache.activemq.artemis.core.io.aio.AIOSequentialFileFactory.DISABLED=AnythingNotNull -Pfast-tests -Ptests-CI install
 
       - name: Clean Up Before Caching
         run: |
@@ -71,7 +71,7 @@ jobs:
 
       - name: Build Main
         run: |
-          mvn -s .github/maven-settings.xml -DskipTests -Derrorprone -Pdev -Pjmh install
+          mvn -s .github/maven-settings.xml --update-snapshots -DskipTests -Derrorprone -Pdev -Pjmh install
 
       - name: Build Examples (JDK11 / -Prelease)
         if: matrix.java == '11'
