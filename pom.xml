@@ -20,7 +20,7 @@
    <groupId>org.apache.activemq</groupId>
    <artifactId>artemis-pom</artifactId>
    <packaging>pom</packaging>
-   <version>2.27.0-SNAPSHOT</version>
+   <version>0.0.1-testing-SNAPSHOT</version>
 
    <parent>
       <groupId>org.apache</groupId>
@@ -246,6 +246,8 @@
            This will be set to false for the "fast-tests" profile as none of those tests should fail. -->
       <testFailureIgnore>true</testFailureIgnore>
       <fast-tests>false</fast-tests>
+
+      <project.build.outputTimestamp>2022-10-14T14:56:47Z</project.build.outputTimestamp>
    </properties>
 
    <scm>
