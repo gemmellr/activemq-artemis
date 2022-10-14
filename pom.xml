@@ -249,9 +249,9 @@
    </properties>
 
    <scm>
-      <connection>scm:git:https://gitbox.apache.org/repos/asf/activemq-artemis.git</connection>
-      <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/activemq-artemis.git</developerConnection>
-      <url>https://github.com/apache/activemq-artemis</url>
+      <connection>scm:git:https://github.com/gemmellr/activemq-artemis.git</connection>
+      <developerConnection>scm:git:https://github.com/gemmellr/activemq-artemis.git</developerConnection>
+      <url>https://github.com/gemmellr/activemq-artemis</url>
       <tag>HEAD</tag>
    </scm>
 
