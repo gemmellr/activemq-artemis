@@ -20,7 +20,7 @@
    <parent>
       <groupId>org.apache.activemq</groupId>
       <artifactId>artemis-pom</artifactId>
-      <version>0.0.1-testing-SNAPSHOT</version>
+      <version>0.0.1-testing</version>
    </parent>
 
    <artifactId>artemis-jms-server</artifactId>

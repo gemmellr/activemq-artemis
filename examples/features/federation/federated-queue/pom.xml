@@ -24,7 +24,7 @@ under the License.
    <parent>
       <groupId>org.apache.activemq.examples.federation</groupId>
       <artifactId>broker-federation</artifactId>
-      <version>0.0.1-testing-SNAPSHOT</version>
+      <version>0.0.1-testing</version>
    </parent>
 
    <artifactId>federated-queue</artifactId>

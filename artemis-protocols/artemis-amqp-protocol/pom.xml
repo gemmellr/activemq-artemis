@@ -20,7 +20,7 @@
    <parent>
       <artifactId>artemis-protocols</artifactId>
       <groupId>org.apache.activemq</groupId>
-      <version>0.0.1-testing-SNAPSHOT</version>
+      <version>0.0.1-testing</version>
    </parent>
 
    <artifactId>artemis-amqp-protocol</artifactId>
