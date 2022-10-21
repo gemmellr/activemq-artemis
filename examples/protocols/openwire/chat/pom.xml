@@ -24,7 +24,7 @@ under the License.
    <parent>
       <groupId>org.apache.activemq.examples.openwire</groupId>
       <artifactId>openwire-examples</artifactId>
-      <version>0.0.1-testing</version>
+      <version>0.0.2-testing-SNAPSHOT</version>
    </parent>
 
    <artifactId>chat-example</artifactId>

@@ -20,7 +20,7 @@
    <groupId>org.apache.activemq</groupId>
    <artifactId>artemis-pom</artifactId>
    <packaging>pom</packaging>
-   <version>0.0.1-testing</version>
+   <version>0.0.2-testing-SNAPSHOT</version>
 
    <parent>
       <groupId>org.apache</groupId>
@@ -242,14 +242,14 @@
       <testFailureIgnore>true</testFailureIgnore>
       <fast-tests>false</fast-tests>
 
-      <project.build.outputTimestamp>2022-10-21T15:08:47Z</project.build.outputTimestamp>
+      <project.build.outputTimestamp>2022-10-21T15:14:18Z</project.build.outputTimestamp>
    </properties>
 
    <scm>
       <connection>scm:git:https://github.com/gemmellr/activemq-artemis.git</connection>
       <developerConnection>scm:git:https://github.com/gemmellr/activemq-artemis.git</developerConnection>
       <url>https://github.com/gemmellr/activemq-artemis</url>
-      <tag>0.0.1-testing</tag>
+      <tag>HEAD</tag>
    </scm>
 
    <issueManagement>
