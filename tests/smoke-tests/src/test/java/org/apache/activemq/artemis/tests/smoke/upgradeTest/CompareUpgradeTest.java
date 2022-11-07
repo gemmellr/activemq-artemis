@@ -38,6 +38,8 @@ public class CompareUpgradeTest {
 
    @Test
    public void testWindows() throws Exception {
+      // TODO? The linux-related dirs later are called 'toUpgradeTest' and 'toUpgradeETC',
+      // Here the 'windows' dirname is a little non-specific, its not even that clear these are all for the same test class.
       String windowsBin = basedir + "/target/classes/servers/windows/bin";
       String windowsETC = basedir + "/target/classes/servers/windowsETC";
 
@@ -119,24 +121,27 @@ public class CompareUpgradeTest {
       }
 
       File file = new File(fileName);
-      Stream<String> lines = Files.lines(file.toPath());
-      lines.forEach(line -> {
-         String trimmedLine = line.trim();
-         expectedValues.forEach((key, value) -> {
-            if (trimmedLine.startsWith(key)) {
-               String actualValue = trimmedLine.substring(key.length());
-               logger.debug("match = {}", line);
-               matchingValues.put(key, actualValue);
+      try (Stream<String> lines = Files.lines(file.toPath())) {
+         lines.forEach(line -> {
+            String trimmedLine = line.trim();
+            expectedValues.forEach((key, value) -> {
+               if (trimmedLine.startsWith(key)) {
+                  String actualValue = trimmedLine.substring(key.length());
+                  logger.debug("match = {}", line);
+                  matchingValues.put(key, actualValue);
 
-               if (value == null) {
-                  logger.debug("no expected value was defined for {}, we will just fill out the matchingValues for further evaluation", key);
-               } else {
-                  logger.debug("prefix={}, expecting={}, actualValue={}", key, value, actualValue);
-                  Assert.assertEquals(key + " did not match", value, actualValue);
+                  if (value == null) {
+                     logger.debug(
+                           "no expected value was defined for {}, we will just fill out the matchingValues for further evaluation",
+                           key);
+                  } else {
+                     logger.debug("prefix={}, expecting={}, actualValue={}", key, value, actualValue);
+                     Assert.assertEquals(key + " did not match", value, actualValue);
+                  }
                }
-            }
+            });
          });
-      });
+      }
 
       Assert.assertEquals("Some elements were not found in the output of " + fileName, matchingValues.size(), expectedValues.size());
 

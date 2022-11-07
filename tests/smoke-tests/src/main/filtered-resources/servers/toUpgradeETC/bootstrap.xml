@@ -25,6 +25,7 @@
         This is to avoid situations where you could have spaces or special characters on this URI -->
    <server configuration="file:${project.basedir}/target/classes/servers/toUpgradeETC/broker.xml"/>
 
+   <!--  TODO This file is from 2.25.0, and changed in 2.26.0, but the upgrade doesnt cover this file -->
    <!-- The web server is only bound to localhost by default -->
    <web path="web">
        <binding uri="http://localhost:8161">
