@@ -130,8 +130,9 @@ public class MQTTSubscriptionManager {
             session.getState().addSubscription(subscription, session.getWildcardConfiguration(), subscriptionIdentifier);
          }
       } catch (Exception e) {
-         // if anything broke during the creation of the consumer (or otherwise) then ensure the subscription queue is removed
+         // if anything broke during the creation of the consumer (or otherwise) then ensure both the subscription queue and persistent subscription state is removed
          q.deleteQueue();
+         session.getSessionStateManager().removeSessionState(session.getState().getClientId());
          throw e;
       }
    }
@@ -272,7 +273,6 @@ public class MQTTSubscriptionManager {
 
       try {
          session.getState().removeSubscription(topic);
-
          ServerConsumer removed = consumers.remove(parseTopicName(topic));
          if (removed != null) {
             removed.close(false);
@@ -308,7 +308,7 @@ public class MQTTSubscriptionManager {
    }
 
    /**
-    * As per MQTT Spec.  Subscribes this client to a number of MQTT topics.
+    * As per MQTT Spec. Subscribes this client to a number of MQTT topics.
     *
     * @param subscriptions
     * @return An array of integers representing the list of accepted QoS for each topic.
