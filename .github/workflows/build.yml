@@ -36,6 +36,10 @@ jobs:
         run: |
           mvn -s .github/maven-settings.xml -Dorg.apache.activemq.artemis.core.io.aio.AIOSequentialFileFactory.DISABLED=AnythingNotNull -Pfast-tests install
 
+      - name: AMQP Tests
+        run: |
+          cd tests/integration-tests/ && mvn -Ptests -Dtest=org.apache.activemq.artemis.tests.integration.amqp.** test
+
       - name: Clean Up Before Caching
         run: |
           rm -rf ~/.m2/repository/org/apache/activemq/tests
