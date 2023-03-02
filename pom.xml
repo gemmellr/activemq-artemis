@@ -120,7 +120,7 @@
 
       <!-- this is basically for tests -->
       <netty-tcnative-version>2.0.54.Final</netty-tcnative-version>
-      <proton.version>0.34.0</proton.version>
+      <proton.version>0.34.1</proton.version>
       <slf4j.version>1.7.36</slf4j.version>
       <log4j.version>2.19.0</log4j.version>
       <qpid.jms.version>1.7.0</qpid.jms.version>
@@ -1951,17 +1951,13 @@
       </plugins>
    </reporting>
 
-   <!--
-     un comment this session here to validate repository releases.
-     <repositories>
+   <repositories>
       <repository>
-         <id>release validation</id>
-         <name>Maven 1.0.0 release</name>
-         <layout>default</layout>
-         <url>https://repository.apache.org/content/repositories/orgapacheactivemq-XXXX</url>
+         <id>staged-proton</id>
+         <url>https://repository.apache.org/content/repositories/orgapacheqpid-1255</url>
          <snapshots>
             <enabled>false</enabled>
          </snapshots>
       </repository>
-   </repositories> -->
+   </repositories>
 </project>
