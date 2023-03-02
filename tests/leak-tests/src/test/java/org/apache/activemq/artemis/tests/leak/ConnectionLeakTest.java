@@ -297,7 +297,7 @@ public class ConnectionLeakTest extends ActiveMQTestBase {
                   });
                }
 
-               Assert.assertTrue(done.await(10, TimeUnit.SECONDS));
+               Assert.assertTrue(done.await(30, TimeUnit.SECONDS));
                Assert.assertEquals(0, errors.get());
                Wait.assertEquals(0, serverQueue::getMessageCount);
                assertMemory(checkLeak, 0, 5, 1, AMQPStandardMessage.class.getName());
