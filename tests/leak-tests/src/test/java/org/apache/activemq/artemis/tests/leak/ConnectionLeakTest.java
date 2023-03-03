@@ -64,7 +64,7 @@ public class ConnectionLeakTest extends ActiveMQTestBase {
 
    private ConnectionFactory createConnectionFactory(String protocol) {
       if (protocol.equals("AMQP")) {
-         return CFUtil.createConnectionFactory("AMQP", "amqp://localhost:61616?amqp.idleTimeout=120000&failover.maxReconnectAttempts=1&jms.prefetchPolicy.all=1000&jms.forceAsyncAcks=true");
+         return CFUtil.createConnectionFactory("AMQP", "amqp://localhost:61616?amqp.drainTimeout=5000&jms.prefetchPolicy.all=1000&jms.forceAsyncAcks=true");
       } else {
          return CFUtil.createConnectionFactory(protocol, "tcp://localhost:61616");
       }

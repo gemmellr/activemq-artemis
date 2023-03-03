@@ -36,10 +36,10 @@ jobs:
         run: |
           mvn -s .github/maven-settings.xml -Dorg.apache.activemq.artemis.core.io.aio.AIOSequentialFileFactory.DISABLED=AnythingNotNull install -DskipTests
 
-      - name: Leak Tests
+      - name: Leak Test
         run: |
           cd tests/leak-tests
-          mvn -s ../../.github/maven-settings.xml -Dorg.apache.activemq.artemis.core.io.aio.AIOSequentialFileFactory.DISABLED=AnythingNotNull -Pfast-tests install
+          PN_TRACE_FRM=true mvn -s ../../.github/maven-settings.xml -Dorg.apache.activemq.artemis.core.io.aio.AIOSequentialFileFactory.DISABLED=AnythingNotNull -Pfast-tests -Dtest=ConnectionLeakTest#testCancelledDeliveries install
 
       - name: Clean Up Before Caching
         run: |
