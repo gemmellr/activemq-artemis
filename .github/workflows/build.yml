@@ -56,9 +56,7 @@ jobs:
       - name: Fast Tests
         run: |
           cd activemq-artemis
-          mvn -s .github/maven-settings.xml clean install -DskipTests
-          cd tests/compatibility-tests
-          mvn -s ../../.github/maven-settings.xml -Dnet.bytebuddy.experimental=true -Dorg.apache.activemq.artemis.core.io.aio.AIOSequentialFileFactory.DISABLED=AnythingNotNull -Pfast-tests -Pcompatibility-tests install
+          mvn -s .github/maven-settings.xml -Dnet.bytebuddy.experimental=true -Dorg.apache.activemq.artemis.core.io.aio.AIOSequentialFileFactory.DISABLED=AnythingNotNull -Pfast-tests -Pcompatibility-tests install
 
       - name: Clean Up Before Caching
         run: |
