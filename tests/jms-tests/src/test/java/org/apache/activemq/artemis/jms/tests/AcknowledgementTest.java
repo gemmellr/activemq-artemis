@@ -1266,6 +1266,8 @@ public class AcknowledgementTest extends JMSTestCase {
 
       Assert.assertTrue(time1 < (time2 / 2));
 
+      assertRemainingMessages(0);
+      assertRemainingMessages(0, "Queue2");
    }
 
    private long send(ConnectionFactory connectionFactory, Destination destination, int messageCount) throws JMSException {
@@ -1290,14 +1292,22 @@ public class AcknowledgementTest extends JMSTestCase {
          connection.start();
          try (Session session = connection.createSession(false, Session.CLIENT_ACKNOWLEDGE)) {
             MessageConsumer consumer = session.createConsumer(destination);
+            int received = 0;
             long start = System.nanoTime();
             for (int i = 0; i < messageCount; i++) {
-               Message message = consumer.receive(100);
+               Message message = consumer.receive(1000);
                if (message != null) {
+                  received++;
                   message.acknowledge();
+               } else {
+                  break;
                }
             }
+
             long end = System.nanoTime();
+
+            ProxyAssertSupport.assertEquals(messageCount, received);
+
             return end - start;
          }
       }
