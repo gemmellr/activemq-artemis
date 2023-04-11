@@ -32,9 +32,11 @@ jobs:
 
       # use 'install' so smoke-tests will work
       # By setting anything to org.apache.activemq.artemis.core.io.aio.AIOSequentialFileFactory.DISABLED we are disabling libaio loading on the testsuite
-      - name: Fast Tests
+      - name: Fast Tests (JMS tests only)
         run: |
-          mvn -s .github/maven-settings.xml -Dorg.apache.activemq.artemis.core.io.aio.AIOSequentialFileFactory.DISABLED=AnythingNotNull -Pfast-tests install
+          mvn -s .github/maven-settings.xml install -DskipTests
+          cd tests/jms-tests
+          mvn -s ../../.github/maven-settings.xml -Dorg.apache.activemq.artemis.core.io.aio.AIOSequentialFileFactory.DISABLED=AnythingNotNull -Pfast-tests install
 
       - name: Clean Up Before Caching
         run: |
@@ -43,6 +45,7 @@ jobs:
           if [ -d ~/.m2/repository/org/apache/activemq ]; then find ~/.m2/repository/org/apache/activemq -name "*-SNAPSHOT" -type d -prune -exec rm -r '{}' \; ; fi
 
   checks:
+    if: github.repository == 'apache/activemq-artemis'
     name: Checks (${{ matrix.java }})
     runs-on: ubuntu-20.04
     strategy:
