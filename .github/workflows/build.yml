@@ -39,7 +39,7 @@ jobs:
       - name: Fast Tests (AcknowledgementTest only)
         run: |
           cd tests/jms-tests
-          for i in $(seq 1 50); do echo "Iteration $i"; mvn -s ../../.github/maven-settings.xml -Dorg.apache.activemq.artemis.core.io.aio.AIOSequentialFileFactory.DISABLED=AnythingNotNull -Pfast-tests -Dtest=AcknowledgementTest test || break; done
+          for i in $(seq 1 50); do echo "Iteration $i"; mvn -s ../../.github/maven-settings.xml -Dorg.apache.activemq.artemis.core.io.aio.AIOSequentialFileFactory.DISABLED=AnythingNotNull -Pfast-tests -Dtest=AcknowledgementTest test || !break; done
 
       - name: Clean Up Before Caching
         run: |
