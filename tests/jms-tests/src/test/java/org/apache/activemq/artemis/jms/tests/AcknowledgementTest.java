@@ -161,6 +161,8 @@ public class AcknowledgementTest extends JMSTestCase {
       Session producerSess = conn.createSession(true, Session.SESSION_TRANSACTED);
       MessageProducer producer = producerSess.createProducer(queue1);
 
+      Session consumerSess = conn.createSession(true, Session.SESSION_TRANSACTED);
+      MessageConsumer consumer = consumerSess.createConsumer(queue1);
       conn.start();
 
       final int NUM_MESSAGES = 20;
@@ -186,12 +188,9 @@ public class AcknowledgementTest extends JMSTestCase {
 
       assertRemainingMessages(NUM_MESSAGES);
 
-      Session consumerSess = conn.createSession(true, Session.SESSION_TRANSACTED);
-      MessageConsumer consumer = consumerSess.createConsumer(queue1);
-
       int count = 0;
       while (true) {
-         Message m = consumer.receive(1000);
+         Message m = consumer.receive(200);
          if (m == null) {
             break;
          }
@@ -206,17 +205,12 @@ public class AcknowledgementTest extends JMSTestCase {
 
       assertRemainingMessages(NUM_MESSAGES);
 
-      count = 0;
-      while (true) {
-         Message m = consumer.receive(1000);
-         if (m == null) {
-            break;
-         }
-         count++;
+      int i = 0;
+      for (; i < NUM_MESSAGES; i++) {
+         consumer.receive();
       }
 
       assertRemainingMessages(NUM_MESSAGES);
-      ProxyAssertSupport.assertEquals(count, NUM_MESSAGES);
 
       // if I don't receive enough messages, the test will timeout
 
@@ -237,6 +231,8 @@ public class AcknowledgementTest extends JMSTestCase {
       Session producerSess = conn.createSession(false, Session.CLIENT_ACKNOWLEDGE);
       MessageProducer producer = producerSess.createProducer(queue1);
 
+      Session consumerSess = conn.createSession(false, Session.CLIENT_ACKNOWLEDGE);
+      MessageConsumer consumer = consumerSess.createConsumer(queue1);
       conn.start();
 
       final int NUM_MESSAGES = 20;
@@ -251,8 +247,6 @@ public class AcknowledgementTest extends JMSTestCase {
 
       logger.trace("Sent messages");
 
-      Session consumerSess = conn.createSession(false, Session.CLIENT_ACKNOWLEDGE);
-      MessageConsumer consumer = consumerSess.createConsumer(queue1);
       int count = 0;
       while (true) {
          Message m = consumer.receive(1000);
@@ -310,6 +304,8 @@ public class AcknowledgementTest extends JMSTestCase {
       Session producerSess = conn.createSession(false, Session.CLIENT_ACKNOWLEDGE);
       MessageProducer producer = producerSess.createProducer(queue1);
 
+      Session consumerSess = conn.createSession(false, Session.CLIENT_ACKNOWLEDGE);
+      MessageConsumer consumer = consumerSess.createConsumer(queue1);
       conn.start();
 
       final int NUM_MESSAGES = 20;
@@ -321,11 +317,8 @@ public class AcknowledgementTest extends JMSTestCase {
 
       assertRemainingMessages(NUM_MESSAGES);
 
-      Session consumerSess = conn.createSession(false, Session.CLIENT_ACKNOWLEDGE);
-      MessageConsumer consumer = consumerSess.createConsumer(queue1);
-
       for (int i = 0; i < NUM_MESSAGES; i++) {
-         Message m = consumer.receive(1000);
+         Message m = consumer.receive(200);
 
          ProxyAssertSupport.assertNotNull(m);
 
@@ -354,6 +347,8 @@ public class AcknowledgementTest extends JMSTestCase {
       Session producerSess = conn.createSession(false, Session.CLIENT_ACKNOWLEDGE);
       MessageProducer producer = producerSess.createProducer(queue1);
 
+      Session consumerSess = conn.createSession(false, Session.CLIENT_ACKNOWLEDGE);
+      MessageConsumer consumer = consumerSess.createConsumer(queue1);
       conn.start();
 
       final int NUM_MESSAGES = 20;
@@ -368,13 +363,10 @@ public class AcknowledgementTest extends JMSTestCase {
 
       logger.trace("Sent messages");
 
-      Session consumerSess = conn.createSession(false, Session.CLIENT_ACKNOWLEDGE);
-      MessageConsumer consumer = consumerSess.createConsumer(queue1);
-
       Message m = null;
       int count = 0;
       for (int i = 0; i < NUM_MESSAGES; i++) {
-         m = consumer.receive(1000);
+         m = consumer.receive(200);
          if (m == null) {
             break;
          }
@@ -416,6 +408,8 @@ public class AcknowledgementTest extends JMSTestCase {
          Session producerSess = conn.createSession(false, Session.CLIENT_ACKNOWLEDGE);
          MessageProducer producer = producerSess.createProducer(queue1);
 
+         Session consumerSess = conn.createSession(false, Session.CLIENT_ACKNOWLEDGE);
+         MessageConsumer consumer = consumerSess.createConsumer(queue1);
          conn.start();
 
          final int NUM_MESSAGES = 20;
@@ -431,13 +425,11 @@ public class AcknowledgementTest extends JMSTestCase {
 
          logger.trace("Sent messages");
 
-         Session consumerSess = conn.createSession(false, Session.CLIENT_ACKNOWLEDGE);
-         MessageConsumer consumer = consumerSess.createConsumer(queue1);
          int count = 0;
 
          Message m = null;
          for (int i = 0; i < NUM_MESSAGES; i++) {
-            m = consumer.receive(1000);
+            m = consumer.receive(200);
             if (m == null) {
                break;
             }
@@ -461,7 +453,7 @@ public class AcknowledgementTest extends JMSTestCase {
 
          count = 0;
          while (true) {
-            m = consumer.receive(1000);
+            m = consumer.receive(200);
             if (m == null) {
                break;
             }
@@ -489,6 +481,9 @@ public class AcknowledgementTest extends JMSTestCase {
 
       MessageProducer producer = producerSess.createProducer(queue1);
 
+      Session consumerSess = conn.createSession(false, Session.AUTO_ACKNOWLEDGE);
+
+      MessageConsumer consumer = consumerSess.createConsumer(queue1);
       conn.start();
 
       final int NUM_MESSAGES = 20;
@@ -501,15 +496,13 @@ public class AcknowledgementTest extends JMSTestCase {
 
       assertRemainingMessages(NUM_MESSAGES);
 
-      Session consumerSess = conn.createSession(false, Session.AUTO_ACKNOWLEDGE);
-      MessageConsumer consumer = consumerSess.createConsumer(queue1);
       int count = 0;
 
       Message m = null;
       for (int i = 0; i < NUM_MESSAGES; i++) {
          assertRemainingMessages(NUM_MESSAGES - i);
 
-         m = consumer.receive(1000);
+         m = consumer.receive(200);
 
          assertRemainingMessages(NUM_MESSAGES - (i + 1));
 
@@ -546,9 +539,10 @@ public class AcknowledgementTest extends JMSTestCase {
 
       MessageProducer producer = producerSess.createProducer(queue1);
 
-      conn.start();
+      Session consumerSess = conn.createSession(false, Session.DUPS_OK_ACKNOWLEDGE);
 
-      assertRemainingMessages(0);
+      MessageConsumer consumer = consumerSess.createConsumer(queue1);
+      conn.start();
 
       final int NUM_MESSAGES = 20;
 
@@ -560,13 +554,11 @@ public class AcknowledgementTest extends JMSTestCase {
 
       assertRemainingMessages(NUM_MESSAGES);
 
-      Session consumerSess = conn.createSession(false, Session.DUPS_OK_ACKNOWLEDGE);
-      MessageConsumer consumer = consumerSess.createConsumer(queue1);
       int count = 0;
 
       Message m = null;
       for (int i = 0; i < NUM_MESSAGES; i++) {
-         m = consumer.receive(1000);
+         m = consumer.receive(200);
 
          if (m == null) {
             break;
@@ -626,7 +618,7 @@ public class AcknowledgementTest extends JMSTestCase {
 
          Message m = null;
          for (int i = 0; i < 19; i++) {
-            m = consumer.receive(1000);
+            m = consumer.receive(200);
 
             ProxyAssertSupport.assertNotNull(m);
          }
@@ -641,6 +633,66 @@ public class AcknowledgementTest extends JMSTestCase {
          ActiveMQServerTestCase.undeployConnectionFactory("MyConnectionFactory2");
       }
 
+   }
+
+   /*
+    * Send some messages, consume them and verify the messages are not sent upon recovery
+    */
+   @Test
+   public void testLazyAcknowledge() throws Exception {
+      Connection conn = createConnection();
+
+      Session producerSess = conn.createSession(false, Session.DUPS_OK_ACKNOWLEDGE);
+      MessageProducer producer = producerSess.createProducer(queue1);
+
+      Session consumerSess = conn.createSession(false, Session.DUPS_OK_ACKNOWLEDGE);
+      MessageConsumer consumer = consumerSess.createConsumer(queue1);
+      conn.start();
+
+      final int NUM_MESSAGES = 20;
+
+      // Send some messages
+      for (int i = 0; i < NUM_MESSAGES; i++) {
+         Message m = producerSess.createMessage();
+         producer.send(m);
+      }
+
+      assertRemainingMessages(NUM_MESSAGES);
+
+      logger.trace("Sent messages");
+
+      int count = 0;
+
+      Message m = null;
+      for (int i = 0; i < NUM_MESSAGES; i++) {
+         m = consumer.receive(200);
+         if (m == null) {
+            break;
+         }
+         count++;
+      }
+
+      ProxyAssertSupport.assertNotNull(m);
+
+      assertRemainingMessages(NUM_MESSAGES);
+
+      logger.trace("Received {} messages", count);
+
+      ProxyAssertSupport.assertEquals(count, NUM_MESSAGES);
+
+      consumerSess.recover();
+
+      logger.trace("Session recover called");
+
+      m = consumer.receiveNoWait();
+
+      logger.trace("Message is: {}", m);
+
+      ProxyAssertSupport.assertNull(m);
+
+      conn.close();
+
+      assertRemainingMessages(0);
    }
 
    @Test
@@ -1181,6 +1233,8 @@ public class AcknowledgementTest extends JMSTestCase {
       Session producerSess = conn.createSession(true, Session.SESSION_TRANSACTED);
       MessageProducer producer = producerSess.createProducer(queue1);
 
+      Session consumerSess = conn.createSession(true, Session.SESSION_TRANSACTED);
+      MessageConsumer consumer = consumerSess.createConsumer(queue1);
       conn.start();
 
       final int NUM_MESSAGES = 20;
@@ -1208,11 +1262,9 @@ public class AcknowledgementTest extends JMSTestCase {
 
       assertRemainingMessages(NUM_MESSAGES);
 
-      Session consumerSess = conn.createSession(true, Session.SESSION_TRANSACTED);
-      MessageConsumer consumer = consumerSess.createConsumer(queue1);
       int count = 0;
       while (true) {
-         Message m = consumer.receive(1000);
+         Message m = consumer.receive(200);
          if (m == null) {
             break;
          }

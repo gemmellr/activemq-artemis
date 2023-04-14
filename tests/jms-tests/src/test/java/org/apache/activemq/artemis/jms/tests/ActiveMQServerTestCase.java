@@ -104,13 +104,14 @@ public abstract class ActiveMQServerTestCase {
    public TestRule watcher = new TestWatcher() {
       @Override
       protected void starting(Description description) {
-         logger.info("**** start #test {}() ***", description.getMethodName());
+         logger.debug(String.format("#*#*# Starting test: %s()...", description.getMethodName()));
       }
 
       @Override
       protected void finished(Description description) {
-         logger.info("**** end #test {}() ***", description.getMethodName());
+         logger.debug(String.format("#*#*# Finished test: %s()...", description.getMethodName()));
       }
+
       @Override
       protected void failed(Throwable e, Description description) {
          ActiveMQServerTestCase.tearDownAllServers();
@@ -354,7 +355,7 @@ public abstract class ActiveMQServerTestCase {
       for (int i = 0; i < 10; i++) {
          messageCount = servers.get(0).getMessageCountForQueue(queueName);
          if (messageCount.longValue() == expected) {
-            return true;
+            break;
          } else {
             Thread.sleep(100);
          }
