@@ -104,12 +104,12 @@ public abstract class ActiveMQServerTestCase {
    public TestRule watcher = new TestWatcher() {
       @Override
       protected void starting(Description description) {
-         logger.debug(String.format("#*#*# Starting test: %s()...", description.getMethodName()));
+         logger.info("#*#*# Starting test: {}()...", description.getMethodName());
       }
 
       @Override
       protected void finished(Description description) {
-         logger.debug(String.format("#*#*# Finished test: %s()...", description.getMethodName()));
+         logger.info("#*#*# Finished test: {}()...", description.getMethodName());
       }
 
       @Override
