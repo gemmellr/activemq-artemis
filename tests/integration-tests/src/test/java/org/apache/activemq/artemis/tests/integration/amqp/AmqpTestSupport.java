@@ -22,17 +22,12 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import org.apache.activemq.artemis.api.core.TransportConfiguration;
 import org.apache.activemq.artemis.core.remoting.impl.netty.TransportConstants;
 import org.apache.activemq.artemis.core.server.ActiveMQServer;
-import org.apache.activemq.artemis.protocol.amqp.broker.AMQPStandardMessage;
-import org.apache.activemq.artemis.protocol.amqp.util.NettyWritable;
 import org.apache.activemq.artemis.tests.util.ActiveMQTestBase;
 import org.apache.activemq.transport.amqp.client.AmqpClient;
 import org.apache.activemq.transport.amqp.client.AmqpConnection;
-import org.apache.qpid.proton.message.impl.MessageImpl;
 import org.junit.After;
 
 /**
