@@ -16,7 +16,7 @@
  */
 package org.apache.activemq.artemis.tests.integration.cluster.reattach;
 
-public class MultiThreadRandomReattachTest extends MultiThreadRandomReattachTestBase {
+public class RandomReattachIntegrationTest extends RandomReattachTestBase {
 
    @Override
    protected int getNumIterations() {
