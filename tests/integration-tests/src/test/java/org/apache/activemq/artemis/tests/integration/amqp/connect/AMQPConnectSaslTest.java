@@ -63,7 +63,7 @@ public class AMQPConnectSaslTest extends AmqpClientTestSupport {
       return createServer(BROKER_PORT_NUM, false);
    }
 
-   @Test(timeout = 20000)
+   @Test(timeout = 20_000)
    public void testConnectsWithAnonymous() throws Exception {
       try (ProtonTestServer peer = new ProtonTestServer()) {
          peer.expectSASLAnonymousConnect(PLAIN, ANONYMOUS);
@@ -86,7 +86,7 @@ public class AMQPConnectSaslTest extends AmqpClientTestSupport {
       }
    }
 
-   @Test(timeout = 20000)
+   @Test(timeout = 20_000)
    public void testConnectsWithPlain() throws Exception {
       try (ProtonTestServer peer = new ProtonTestServer()) {
          peer.expectSASLPlainConnect(USER, PASSWD, PLAIN, ANONYMOUS);
@@ -111,12 +111,12 @@ public class AMQPConnectSaslTest extends AmqpClientTestSupport {
       }
    }
 
-   @Test
+   @Test(timeout = 20_000)
    public void testAnonymousSelectedWhenNoCredentialsSupplied() throws Exception {
-       doMechanismSelectedTestImpl(null, null, ANONYMOUS, new String[]{SCRAM_SHA_512, PLAIN, ANONYMOUS});
+      doMechanismSelectedTestImpl(null, null, ANONYMOUS, new String[]{SCRAM_SHA_512, PLAIN, ANONYMOUS});
    }
 
-   @Test(timeout = 200000)
+   @Test(timeout = 20_000)
    public void testSelectsSCRAMWhenCredentialsPresent() throws Exception {
       doMechanismSelectedTestImpl(USER, PASSWD, SCRAM_SHA_512, new String[]{SCRAM_SHA_512, PLAIN, ANONYMOUS});
    }
@@ -147,12 +147,12 @@ public class AMQPConnectSaslTest extends AmqpClientTestSupport {
       }
    }
 
-   @Test(timeout = 20000)
+   @Test(timeout = 20_000)
    public void testConnectsWithExternal() throws Exception {
       doConnectWithExternalTestImpl(true);
    }
 
-   @Test(timeout = 20000)
+   @Test(timeout = 20_000)
    public void testExternalIgnoredWhenNoClientCertSupplied() throws Exception {
       doConnectWithExternalTestImpl(false);
    }
