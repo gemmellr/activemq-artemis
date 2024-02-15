@@ -18,7 +18,6 @@ package org.apache.activemq.artemis.tests.integration.amqp.connect;
 
 import java.lang.invoke.MethodHandles;
 import java.net.URI;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.activemq.artemis.core.config.amqpBrokerConnectivity.AMQPBrokerConnectConfiguration;
