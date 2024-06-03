@@ -15,26 +15,23 @@
  * limitations under the License.
  */
 
-package org.apache.activemq.artemis.tests.rules;
+package org.apache.activemq.artemis.tests.extensions;
 
-import java.io.File;
+import org.apache.activemq.artemis.utils.SpawnedVMSupport;
+import org.junit.jupiter.api.extension.AfterEachCallback;
+import org.junit.jupiter.api.extension.BeforeEachCallback;
+import org.junit.jupiter.api.extension.Extension;
+import org.junit.jupiter.api.extension.ExtensionContext;
 
-import org.apache.activemq.artemis.utils.FileUtil;
-import org.junit.rules.ExternalResource;
+public class SpawnedVMCheckExtension implements Extension, BeforeEachCallback, AfterEachCallback {
 
-/**
- * This will remove a folder on a tearDown *
- */
-public class RemoveFolder extends ExternalResource {
-
-   private final String folderName;
-
-   public RemoveFolder(String folderName) {
-      this.folderName = folderName;
+   @Override
+   public void beforeEach(ExtensionContext context) throws Exception {
+      SpawnedVMSupport.enableCheck();
    }
 
    @Override
-   protected void after() {
-      FileUtil.deleteDirectory(new File(folderName));
+   public void afterEach(ExtensionContext context) throws Exception {
+      SpawnedVMSupport.checkProcess();
    }
 }
