@@ -114,6 +114,7 @@
       <maven.bundle.plugin.version>5.1.9</maven.bundle.plugin.version>
       <jib.maven.plugin.version>3.4.3</jib.maven.plugin.version>
       <versions.maven.plugin.version>2.16.1</versions.maven.plugin.version>
+      <depends.maven.plugin.version>1.5.0</depends.maven.plugin.version>
       <sevntu.checks.version>1.44.1</sevntu.checks.version>
       <checkstyle.version>10.17.0</checkstyle.version>
       <mockito.version>5.12.0</mockito.version>
@@ -1028,6 +1029,11 @@
                   </annotationProcessorPaths>
                   <annotationProcessorPathsUseDepMgmt>true</annotationProcessorPathsUseDepMgmt>
                </configuration>
+            </plugin>
+            <plugin>
+               <groupId>org.apache.servicemix.tooling</groupId>
+               <artifactId>depends-maven-plugin</artifactId>
+               <version>${depends.maven.plugin.version}</version>
             </plugin>
          </plugins>
       </pluginManagement>
