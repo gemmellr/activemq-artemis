@@ -324,7 +324,7 @@ Most existing customisations to the old configuration files and scripts will be 
 As such you should compare the old configuration files with the refreshed ones and then port any missing customisations you may have made as necessary.
 The upgrade command itself will copy the older files it changes to an `old-config-bkp.` folder within the instance directory.
 
-Similarly, if you had customised the old `logging.properties` file you may need to prepare analogous changes for the new `log4j2.properties` and `log4j2-utility.properties` files.
+Similarly, if you had customised the old `logging.properties` file you may need to prepare analogous changes for the new `log4j2.properties` file.
 ====
 
 Note also that the `configuration-file-refresh-period` setting in `broker.xml` no longer covers logging configuration refresh.

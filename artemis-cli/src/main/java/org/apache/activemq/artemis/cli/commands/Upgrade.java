@@ -166,6 +166,13 @@ public class Upgrade extends InstallAbstract {
             upgradeJDK(context, JDK_PREFIX_WINDOWS, "", KEEPING_JVM_ARGUMENTS, artemisUtilityProfileCmdTmp, artemisUtilityProfileCmd, artemisUtilityProfileCmdBkp,
                        "set ARTEMIS_INSTANCE=\"", "set ARTEMIS_DATA_DIR=", "set ARTEMIS_ETC_DIR=", "set ARTEMIS_OOME_DUMP=", "set ARTEMIS_INSTANCE_URI=", "set ARTEMIS_INSTANCE_ETC_URI=");
          } else {
+            if (data == null || data.equals("data")) {
+               dataFolder = getDATA(context, dataFolder, artemisProfileCmd, "set ARTEMIS_DATA_DIR=");
+
+               Create.addScriptFilters(filters, getHome(), getInstance(), etcFolder, dataFolder, oomeDumpFile, javaMemory, getJavaOptions(), getJavaUtilityOptions(), "NA");
+            }
+
+            context.out.println("Creating " + artemisUtilityProfileCmd);
             write("etc/" + Create.ETC_ARTEMIS_UTILITY_PROFILE_CMD, artemisUtilityProfileCmd, filters, false, false);
          }
       }
@@ -184,10 +191,13 @@ public class Upgrade extends InstallAbstract {
          write(Create.BIN_ARTEMIS_SERVICE, artemisServiceTmp, filters, false, false);
          upgrade(context, artemisServiceTmp, artemisService, artemisServiceBkp); // we replace the whole thing
 
-         write("etc/" + Create.ETC_ARTEMIS_PROFILE, new File(tmp, Create.ETC_ARTEMIS_PROFILE), filters, false, false);
-         upgradeJDK(context, JDK_PREFIX_LINUX, "\"", KEEPING_JVM_ARGUMENTS,
-                    new File(tmp, Create.ETC_ARTEMIS_PROFILE), new File(etcFolder, Create.ETC_ARTEMIS_PROFILE), new File(etcBkp, Create.ETC_ARTEMIS_PROFILE), "ARTEMIS_INSTANCE=",
-                    "ARTEMIS_DATA_DIR=", "ARTEMIS_ETC_DIR=", "ARTEMIS_OOME_DUMP=", "ARTEMIS_INSTANCE_URI=", "ARTEMIS_INSTANCE_ETC_URI=", "HAWTIO_ROLE=");
+         File artemisProfile = new File(etcFolder, Create.ETC_ARTEMIS_PROFILE);
+         File artemisProfileTmp = new File(tmp, Create.ETC_ARTEMIS_PROFILE);
+         File artemisProfileBkp = new File(etcBkp, Create.ETC_ARTEMIS_PROFILE);
+
+         write("etc/" + Create.ETC_ARTEMIS_PROFILE, artemisProfileTmp, filters, false, false);
+         upgradeJDK(context, JDK_PREFIX_LINUX, "\"", KEEPING_JVM_ARGUMENTS, artemisProfileTmp, artemisProfile, artemisProfileBkp,
+               "ARTEMIS_INSTANCE=", "ARTEMIS_DATA_DIR=", "ARTEMIS_ETC_DIR=", "ARTEMIS_OOME_DUMP=", "ARTEMIS_INSTANCE_URI=", "ARTEMIS_INSTANCE_ETC_URI=", "HAWTIO_ROLE=");
 
          File artemisUtilityProfile = new File(etcFolder, Create.ETC_ARTEMIS_UTILITY_PROFILE);
          File artemisUtilityProfileTmp = new File(tmp, Create.ETC_ARTEMIS_UTILITY_PROFILE);
@@ -197,6 +207,13 @@ public class Upgrade extends InstallAbstract {
             upgradeJDK(context, JDK_PREFIX_LINUX, "\"", KEEPING_JVM_ARGUMENTS, artemisUtilityProfileTmp, artemisUtilityProfile, artemisUtilityProfileBkp,
                "ARTEMIS_INSTANCE=", "ARTEMIS_DATA_DIR=", "ARTEMIS_ETC_DIR=", "ARTEMIS_OOME_DUMP=", "ARTEMIS_INSTANCE_URI=", "ARTEMIS_INSTANCE_ETC_URI=");
          } else {
+            if (data == null || data.equals("data")) {
+               dataFolder = getDATA(context, dataFolder, artemisProfile, "ARTEMIS_DATA_DIR=");
+
+               Create.addScriptFilters(filters, getHome(), getInstance(), etcFolder, dataFolder, oomeDumpFile, javaMemory, getJavaOptions(), getJavaUtilityOptions(), "NA");
+            }
+
+            context.out.println("Creating " + artemisUtilityProfile);
             write("etc/" + Create.ETC_ARTEMIS_UTILITY_PROFILE, artemisUtilityProfile, filters, false, false);
          }
       }
@@ -220,15 +237,12 @@ public class Upgrade extends InstallAbstract {
       return null;
    }
 
-   private File getETC(ActionContext context, File etcFolder, File cmd, String pattern) throws IOException {
-      String etcLine = getLine(cmd, pattern);
-      if (etcLine != null) {
-         etcLine = etcLine.trim();
-         etcLine = etcLine.substring(pattern.length() + 1, etcLine.length() - 1);
-         etcFolder = new File(etcLine);
-         context.out.println("ETC found at " + etcFolder);
-      }
-      return etcFolder;
+   private File getETC(ActionContext context, File etcFolder, File cmd, String prefix) throws IOException {
+      return getPathFromFile(context, etcFolder, cmd, prefix, "ETC");
+   }
+
+   private File getDATA(ActionContext context, File etcFolder, File profile, String prefix) throws IOException {
+      return getPathFromFile(context, etcFolder, profile, prefix, "DATA");
    }
 
    private String getLine(File cmd, String pattern) throws IOException {
@@ -246,6 +260,18 @@ public class Upgrade extends InstallAbstract {
       return null;
    }
 
+   private File getPathFromFile(ActionContext context, File defaultPath, File file, String prefix, String name) throws IOException {
+      String pathEntryLine = getLine(file, prefix);
+      if (pathEntryLine != null) {
+         String pathEntry = pathEntryLine.trim().substring(prefix.length() + 1, pathEntryLine.length() - 1);
+         File path = new File(pathEntry);
+         context.out.println(name + " found as " + path);
+
+         return path;
+      }
+
+      return defaultPath;
+   }
 
    private void upgradeJDK(ActionContext context, String jdkPrefix, String endOfLine, String[] keepArguments, File tmpFile, File targetFile, File bkpFile, String... keepingPrefixes) throws Exception {
 
