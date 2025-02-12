@@ -31,11 +31,13 @@ public class RandomUtil {
       return random;
    }
 
-   private static String letters = "abcdefghijklmnopqrstuvwxyz";
+   private static final String letters = "abcdefghijklmnopqrstuvwxyz";
 
-   private static String digits = "0123456789";
+   private static final String digits = "0123456789";
 
-   private static String randomBase = letters + letters.toUpperCase() + digits;
+   private static final String randomBase = letters + letters.toUpperCase() + digits;
+
+   private static final int randomBaseLength = randomBase.length();
 
    /**
     * Utility method to build a {@code String} filled with random alpha-numeric characters. The {@code String} will
@@ -51,7 +53,7 @@ public class RandomUtil {
    public static String randomAlphaNumericString(int length) {
       StringBuilder result = new StringBuilder(length);
       for (int i = 0; i < length; i++) {
-         result.append(randomBase.charAt(randomInterval(0, randomBase.length())));
+         result.append(randomBase.charAt(random.nextInt(randomBaseLength)));
       }
       return result.toString();
    }
@@ -80,7 +82,7 @@ public class RandomUtil {
     * @return A randomly generated alpha-numeric {@code char}
     */
    public static char randomChar() {
-      return randomBase.charAt(randomInterval(0, randomBase.length()));
+      return randomBase.charAt(random.nextInt(randomBaseLength));
    }
 
    public static long randomLong() {
