@@ -19,6 +19,7 @@ on:
 env:
   EXAMPLES_REPO: ${{ inputs.examplesRepo || 'apache/activemq-artemis-examples' }}
   EXAMPLES_BRANCH: ${{ inputs.examplesRepoBranch || 'development' }}
+  MAVEN_ARGS: '-Dapache.snapshots'
 
 
 jobs:
