@@ -19,6 +19,7 @@ on:
 env:
   EXAMPLES_REPO: ${{ inputs.examplesRepo || 'apache/activemq-artemis-examples' }}
   EXAMPLES_BRANCH: ${{ inputs.examplesRepoBranch || 'development' }}
+  MAVEN_ARGS: '-Puse-apache-snapshots'
 
 
 jobs:
@@ -56,7 +57,7 @@ jobs:
       - name: Fast Tests
         run: |
           cd activemq-artemis
-          mvn -s .github/maven-settings.xml -Dorg.apache.activemq.artemis.core.io.aio.AIOSequentialFileFactory.DISABLED=AnythingNotNull -Pfast-tests -Pcompatibility-tests install
+          mvn -s .github/maven-settings.xml --update-snapshots -Dorg.apache.activemq.artemis.core.io.aio.AIOSequentialFileFactory.DISABLED=AnythingNotNull -Pfast-tests -Pcompatibility-tests install
 
       - name: Clean Up Before Caching
         run: |
@@ -112,13 +113,13 @@ jobs:
         if: matrix.java == '17'
         run: |
           cd activemq-artemis
-          mvn -s .github/maven-settings.xml -DskipTests -Derrorprone -Pdev -Prelease -Dgpg.skip install
+          mvn -s .github/maven-settings.xml --update-snapshots -DskipTests -Derrorprone -Pdev -Prelease -Dgpg.skip install
 
       - name: Build Main (JDK >17)
         if: matrix.java != '17'
         run: |
           cd activemq-artemis
-          mvn -s .github/maven-settings.xml -DskipTests -Derrorprone -Pdev -Pjmh -Popenwire-tests -DskipActiveMQ5Tests install
+          mvn -s .github/maven-settings.xml --update-snapshots -DskipTests -Derrorprone -Pdev -Pjmh -Popenwire-tests -DskipActiveMQ5Tests install
 
       - name: Set Examples Version to Artemis Version
         run: |
