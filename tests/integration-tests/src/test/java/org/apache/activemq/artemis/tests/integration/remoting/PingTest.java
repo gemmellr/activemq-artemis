@@ -39,6 +39,7 @@ import org.apache.activemq.artemis.spi.core.protocol.RemotingConnection;
 import org.apache.activemq.artemis.tests.util.ActiveMQTestBase;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -88,6 +89,7 @@ public class PingTest extends ActiveMQTestBase {
     * Test that no failure listeners are triggered in a non failure case with pinging going on
     */
    @Test
+   @Timeout(30)
    public void testNoFailureWithPinging() throws Exception {
       ServerLocator locator = createNettyNonHALocator();
 
@@ -141,6 +143,7 @@ public class PingTest extends ActiveMQTestBase {
     * Test that no failure listeners are triggered in a non failure case with no pinging going on
     */
    @Test
+   @Timeout(120)
    public void testNoFailureNoPinging() throws Exception {
       TransportConfiguration transportConfig = new TransportConfiguration(INVM_CONNECTOR_FACTORY);
       ServerLocator locator = addServerLocator(ActiveMQClient.createServerLocatorWithoutHA(transportConfig));
@@ -193,6 +196,7 @@ public class PingTest extends ActiveMQTestBase {
     * Test that pinging is disabled for in-vm connection when using the default settings
     */
    @Test
+   @Timeout(200)
    public void testNoPingingOnInVMConnection() throws Exception {
       // server should receive one and only one ping from the client so that
       // the server connection TTL is configured with the client value
@@ -230,6 +234,7 @@ public class PingTest extends ActiveMQTestBase {
     * Test the server timing out a connection since it doesn't receive a ping in time
     */
    @Test
+   @Timeout(30)
    public void testServerFailureNoPing() throws Exception {
       TransportConfiguration transportConfig = new TransportConfiguration(INVM_CONNECTOR_FACTORY);
       ServerLocator locator = addServerLocator(ActiveMQClient.createServerLocatorWithoutHA(transportConfig));
@@ -299,6 +304,7 @@ public class PingTest extends ActiveMQTestBase {
     * Test the client triggering failure due to no ping from server received in time
     */
    @Test
+   @Timeout(30)
    public void testClientFailureNoServerPing() throws Exception {
       // server must received at least one ping from the client to pass
       // so that the server connection TTL is configured with the client value

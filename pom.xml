@@ -830,6 +830,11 @@
                      <version>3.0</version>
                      <usePhrasedTestCaseMethodName>true</usePhrasedTestCaseMethodName>
                   </statelessTestsetReporter>
+                  <properties>
+                     <configurationParameters>
+                        junit.jupiter.execution.timeout.default = 120s
+                     </configurationParameters>
+                  </properties>
                </configuration>
             </plugin>
             <plugin>
