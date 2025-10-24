@@ -832,7 +832,7 @@
                   </statelessTestsetReporter>
                   <properties>
                      <configurationParameters>
-                        junit.jupiter.execution.timeout.default = 120s
+                        junit.jupiter.execution.timeout.default = 60s
                      </configurationParameters>
                   </properties>
                </configuration>
