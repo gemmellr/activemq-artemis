@@ -37,6 +37,7 @@ import org.apache.activemq.artemis.cli.commands.helper.HelperCreate;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -173,6 +174,7 @@ public class TopologyCheckTest extends SmokeTestBase {
    }
 
    @Test
+   @Timeout(100)
    public void testCheckTopology() throws Throwable {
       String[] uris = new String[]{URI_1, URI_2, URI_3, URI_4};
       String[] nodes = new String[4];

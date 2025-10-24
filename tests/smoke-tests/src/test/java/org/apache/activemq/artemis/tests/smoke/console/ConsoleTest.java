@@ -36,6 +36,7 @@ import org.apache.activemq.artemis.tests.smoke.common.SmokeTestBase;
 import org.apache.activemq.artemis.util.ServerUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.openqa.selenium.MutableCapabilities;
 import org.openqa.selenium.WebDriver;
@@ -89,6 +90,7 @@ public abstract class ConsoleTest extends SmokeTestBase {
    }
 
    @BeforeEach
+   @Timeout(600)
    public void before() throws Exception {
       File jolokiaAccessFile = Paths.get(getServerLocation(SERVER_NAME), "etc", Create.ETC_JOLOKIA_ACCESS_XML).toFile();
       String jolokiaAccessContent = FileUtils.readFileToString(jolokiaAccessFile, "UTF-8");
@@ -190,6 +192,7 @@ public abstract class ConsoleTest extends SmokeTestBase {
    }
 
    @AfterEach
+   @Timeout(120)
    public void stopWebDriver() {
       if (browserWebDriverContainer != null) {
          browserWebDriverContainer.stop();
