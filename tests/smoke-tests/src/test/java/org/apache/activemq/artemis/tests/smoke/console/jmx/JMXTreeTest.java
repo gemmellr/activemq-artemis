@@ -24,6 +24,7 @@ import org.apache.activemq.artemis.tests.smoke.console.pages.StatusPage;
 import org.apache.activemq.artemis.tests.smoke.console.pages.jmx.AttributesPage;
 import org.apache.activemq.artemis.utils.Wait;
 import org.junit.jupiter.api.TestTemplate;
+import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import static org.apache.activemq.artemis.tests.smoke.console.PageConstants.DEFAULT_CONSOLE_NAME;
@@ -38,6 +39,7 @@ public class JMXTreeTest extends ArtemisJMXTest {
    }
 
    @TestTemplate
+   @Timeout(300)
    public void testExpandTree() {
 
       String expectedConsoleName = System.getProperty("artemis.console.name", DEFAULT_CONSOLE_NAME);
@@ -54,6 +56,7 @@ public class JMXTreeTest extends ArtemisJMXTest {
    }
 
    @TestTemplate
+   @Timeout(300)
    public void testSelectBrokerNode() throws Exception {
       loadLandingPage();
       LoginPage loginPage = new LoginPage(driver);

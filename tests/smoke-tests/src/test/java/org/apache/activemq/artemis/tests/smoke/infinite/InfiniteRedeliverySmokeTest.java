@@ -39,6 +39,7 @@ import org.apache.activemq.artemis.cli.commands.helper.HelperCreate;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.lang.invoke.MethodHandles;
@@ -71,6 +72,7 @@ public class InfiniteRedeliverySmokeTest extends SmokeTestBase {
    }
 
    @Test
+   @Timeout(200)
    public void testValidateRedeliveries() throws Exception {
       ConnectionFactory factory = new ActiveMQConnectionFactory();
       Connection connection = factory.createConnection();
@@ -124,6 +126,7 @@ public class InfiniteRedeliverySmokeTest extends SmokeTestBase {
    }
 
    @Test
+   @Timeout(100)
    public void testValidateJournalOnRollbackSend() throws Exception {
       ConnectionFactory factory = new ActiveMQConnectionFactory();
       Connection connection = factory.createConnection();

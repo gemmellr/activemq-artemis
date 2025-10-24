@@ -40,6 +40,7 @@ import org.apache.activemq.artemis.cli.commands.helper.HelperCreate;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 public class ClusteredLargeMessageTest extends SmokeTestBase {
 
@@ -93,6 +94,7 @@ public class ClusteredLargeMessageTest extends SmokeTestBase {
    }
 
    @Test
+   @Timeout(100)
    public void testLargeMessage() throws Exception {
 
       // I'm calling all 3 here as I want to run all of these with a single server start
@@ -136,11 +138,13 @@ public class ClusteredLargeMessageTest extends SmokeTestBase {
    }
 
    @Test
+   @Timeout(100)
    public void testKillWhileSendingLargeCORE() throws Exception {
       testKillWhileSendingLarge("CORE");
    }
 
    @Test
+   @Timeout(60)
    public void testKillWhileSendingLargeAMQP() throws Exception {
       testKillWhileSendingLarge("AMQP");
    }

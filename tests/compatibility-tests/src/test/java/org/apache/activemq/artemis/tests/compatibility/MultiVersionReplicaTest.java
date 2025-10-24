@@ -41,6 +41,7 @@ import org.apache.activemq.artemis.tests.extensions.parameterized.Parameters;
 import org.apache.qpid.jms.JmsConnectionFactory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.TestTemplate;
+import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 @ExtendWith(ParameterizedTestExtension.class)
@@ -96,6 +97,7 @@ public class MultiVersionReplicaTest extends ClasspathBase {
 
 
    @TestTemplate
+   @Timeout(90)
    public void testReplica() throws Throwable {
       System.out.println("Starting live");
       evaluate(mainClassloader, "multiVersionReplica/mainServer.groovy", serverFolder.getAbsolutePath(), "1", "61000", "61001");

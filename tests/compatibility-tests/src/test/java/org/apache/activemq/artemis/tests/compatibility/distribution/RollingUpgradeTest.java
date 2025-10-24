@@ -39,6 +39,7 @@ import org.apache.activemq.artemis.utils.TestParameters;
 import org.apache.activemq.artemis.utils.Wait;
 import org.apache.activemq.artemis.cli.commands.helper.HelperBase;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -182,11 +183,13 @@ public class RollingUpgradeTest extends RealServerTestBase {
    }
 
    @Test
+   @Timeout(200)
    public void testRollUpgrade_2_30() throws Exception {
       testRollUpgrade(new File(TWO_THIRTY), HelperBase.getHome(ARTEMIS_HOME_PROPERTY));
    }
 
    @Test
+   @Timeout(200)
    public void testRollUpgrade_2_37() throws Exception {
       testRollUpgrade(new File(TWO_THIRTY_SEVEN), HelperBase.getHome(ARTEMIS_HOME_PROPERTY));
    }
@@ -195,6 +198,7 @@ public class RollingUpgradeTest extends RealServerTestBase {
    // perform the tests towards that distribution
    // Define a System Property TEST_ROLLED_DISTRIBUTION_UPGRADE towards the new Artemis home (by default the test will use BaseHelper.getHome()
    @Test
+   @Timeout(200)
    public void testRollUpgrade_Provided_Distribution() throws Exception {
       String distribution = TestParameters.testProperty("ROLLED", "DISTRIBUTION", null);
       assumeTrue(distribution != null);

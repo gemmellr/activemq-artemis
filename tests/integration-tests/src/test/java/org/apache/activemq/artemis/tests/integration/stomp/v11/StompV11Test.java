@@ -48,6 +48,7 @@ import org.apache.activemq.artemis.tests.util.Wait;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -742,6 +743,7 @@ public class StompV11Test extends StompTestBase {
    }
 
    @Test
+   @Timeout(100)
    public void testHeartBeatToTTL() throws Exception {
       ClientStompFrame frame;
       ClientStompFrame reply;
