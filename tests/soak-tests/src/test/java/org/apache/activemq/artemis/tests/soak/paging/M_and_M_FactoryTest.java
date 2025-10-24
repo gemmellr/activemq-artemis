@@ -50,6 +50,7 @@ import org.apache.activemq.artemis.cli.commands.helper.HelperCreate;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.lang.invoke.MethodHandles;
@@ -124,11 +125,12 @@ public class M_and_M_FactoryTest extends SoakTestBase {
 
 
    @Test
+   @Timeout(200)
    public void testM_and_M_RandomProtocol() throws Exception {
       test_M_and_M_Sorting(randomProtocol("AMQP", "CORE"), 2000, 2, 2, 500);
    }
 
-   public void test_M_and_M_Sorting(String protocol, int batchSize, int restarts, int clientRuns, int killClientEveryX) throws Exception {
+   private void test_M_and_M_Sorting(String protocol, int batchSize, int restarts, int clientRuns, int killClientEveryX) throws Exception {
       this.theprotocol = protocol;
       this.BATCH_SIZE = batchSize;
       this.restarts = restarts;
