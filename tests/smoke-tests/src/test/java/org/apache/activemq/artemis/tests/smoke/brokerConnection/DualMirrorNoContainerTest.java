@@ -46,6 +46,7 @@ import org.apache.activemq.artemis.utils.RandomUtil;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 public class DualMirrorNoContainerTest extends SmokeTestBase {
 
@@ -91,16 +92,19 @@ public class DualMirrorNoContainerTest extends SmokeTestBase {
    }
 
    @Test
+   @Timeout(30)
    public void testMirrorWithTX() throws Throwable {
       testMirrorOverBokerConnection(true);
    }
 
    @Test
+   @Timeout(30)
    public void testMirrorWithoutTX() throws Throwable {
       testMirrorOverBokerConnection(false);
    }
 
    @Test
+   @Timeout(30)
    public void testRollback() throws Throwable {
       ConnectionFactory cfA = CFUtil.createConnectionFactory("amqp", "tcp://localhost:61616");
       ConnectionFactory cfB = CFUtil.createConnectionFactory("amqp", "tcp://localhost:61617");
@@ -193,11 +197,13 @@ public class DualMirrorNoContainerTest extends SmokeTestBase {
    }
 
    @Test
+   @Timeout(200)
    public void testReconnectMirror() throws Throwable {
       testReconnectMirror(false);
    }
 
    @Test
+   @Timeout(200)
    public void testReconnectMirrorLargeMessage() throws Throwable {
       testReconnectMirror(true);
    }

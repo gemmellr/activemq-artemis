@@ -43,6 +43,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestTemplate;
+import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -119,6 +120,7 @@ public class BridgeTransferingTest extends SmokeTestBase {
    }
 
    @TestTemplate
+   @Timeout(300)
    public void testTransfer() throws Exception {
       ConnectionFactory cf = CFUtil.createConnectionFactory(theprotocol, "tcp://localhost:61616");
       ((ActiveMQConnectionFactory) cf).setMinLargeMessageSize(minlargeMessageSize);

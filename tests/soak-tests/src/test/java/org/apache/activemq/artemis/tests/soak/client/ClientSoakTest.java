@@ -35,6 +35,7 @@ import org.apache.activemq.artemis.core.server.ActiveMQServer;
 import org.apache.activemq.artemis.tests.util.ActiveMQTestBase;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -105,6 +106,7 @@ public class ClientSoakTest extends ActiveMQTestBase {
    }
 
    @Test
+   @Timeout(300)
    public void testSoakClient() throws Exception {
       final ServerLocator locator = createFactory(isNetty());
       final ClientSessionFactory sf = createSessionFactory(locator);

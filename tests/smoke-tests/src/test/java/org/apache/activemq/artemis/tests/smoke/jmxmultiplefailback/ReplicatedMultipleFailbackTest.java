@@ -51,6 +51,7 @@ import org.apache.activemq.artemis.cli.commands.helper.HelperCreate;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.lang.invoke.MethodHandles;
@@ -266,6 +267,7 @@ public class ReplicatedMultipleFailbackTest extends SmokeTestBase {
    }
 
    @Test
+   @Timeout(300)
    public void testMultipleFailback() throws Exception {
       logger.info("TEST BOOTSTRAPPING START: STARTING brokers {}", Arrays.toString(Broker.values()));
       final int failbackRetries = 10;

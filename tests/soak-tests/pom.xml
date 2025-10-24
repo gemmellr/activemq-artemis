@@ -204,6 +204,12 @@
                   <include>**/*Test.java</include>
                </includes>
                <argLine>${activemq-surefire-argline}</argLine>
+               <properties>
+                  <configurationParameters>
+                     junit.jupiter.execution.timeout.testable.method.default = 150s
+                     junit.jupiter.execution.timeout.lifecycle.method.default = 90s
+                  </configurationParameters>
+               </properties>
             </configuration>
          </plugin>
       </plugins>

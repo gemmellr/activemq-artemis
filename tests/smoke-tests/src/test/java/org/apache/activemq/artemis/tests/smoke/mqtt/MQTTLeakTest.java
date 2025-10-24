@@ -36,6 +36,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 public class MQTTLeakTest extends SmokeTestBase {
 
@@ -92,6 +93,7 @@ public class MQTTLeakTest extends SmokeTestBase {
    }
 
    @Test
+   @Timeout(300)
    public void testMQTTLeak() throws Throwable {
 
       try {
