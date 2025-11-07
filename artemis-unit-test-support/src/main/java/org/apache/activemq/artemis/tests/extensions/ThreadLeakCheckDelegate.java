@@ -40,6 +40,8 @@ public class ThreadLeakCheckDelegate {
 
    private static Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
+   private static final int CHECK_DURATION = 45000;
+
    private static Set<String> knownThreads = new HashSet<>();
 
    protected boolean enabled = true;
@@ -65,8 +67,8 @@ public class ThreadLeakCheckDelegate {
             boolean failedOnce = false;
             int checks = 0;
 
-            // if the test failed.. there's no point on waiting a full minute.. we will report it once and go
-            int timeout = testFailed ? 0 : 60000;
+            // if the test failed.. there's no point on waiting.. we will report it once and go
+            int timeout = testFailed ? 0 : CHECK_DURATION;
 
             long deadline = System.currentTimeMillis() + timeout;
             do {
